@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Pengusaha v4</title>
+    <title>Kalkulator Pengusaha v5</title>
     <!-- Menggunakan Tailwind CSS untuk styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Menggunakan Font Inter dari Google Fonts -->
@@ -18,6 +18,7 @@
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background-color: #f7f7f7; /* Mengunci latar belakang ke warna netral */
         }
         .calculator-card {
             display: none;
@@ -127,64 +128,57 @@
             <div class="p-6 md:p-8">
                 <div id="calculator-content" class="max-w-4xl mx-auto">
                      <div id="welcome-screen" class="calculator-card active">
-                        <div class="bg-white p-8 rounded-xl shadow-md overflow-hidden">
-                            <h1 class="text-3xl font-bold text-gray-900 text-center">Selamat Datang di Kalkulator Pengusaha</h1>
-                            <p class="mt-4 text-lg text-gray-600 text-center">Akses lebih dari 20 alat hitung finansial dan operasional bisnis.</p>
+                        <div class="bg-white p-8 rounded-xl shadow-2xl overflow-hidden border border-gray-100">
+                            <h1 class="text-4xl font-extrabold text-gray-900 text-center tracking-tight">Kalkulator Bisnis Premium</h1>
+                            <p class="mt-4 text-xl text-gray-500 text-center font-light">Akses cepat ke lebih dari 20 alat hitung finansial dan operasional penting.</p>
 
-                            <!-- NEW: Summary Cards Grid -->
-                            <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- NEW: Enhanced Summary Cards Grid -->
+                            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
                                 
                                 <!-- Card 1: Keuangan & Akuntansi -->
-                                <div class="p-5 bg-blue-50 border border-blue-200 rounded-xl shadow-lg transition-transform transform hover:scale-[1.02]">
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-blue-500 rounded-full text-white">
-                                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.076 60.076 0 011.5-6v2.406a4.5 4.5 0 01-3.75-4.383V18.75zm12.75-9.75h.008v.008h-.008V9zm4.5 0h.008v.008h-.008V9zm-2.25 0h.008v.008h-.008V9zm-4.5 0h.008v.008h-.008V9zm-4.5 0h.008v.008h-.008V9zm-2.25 0h.008v.008h-.008V9z" /></svg>
+                                <div class="group p-6 bg-blue-50 border border-blue-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer nav-item" data-calculator="HPP">
+                                    <div class="flex items-center gap-4">
+                                        <div class="p-3 bg-blue-500 rounded-full text-white group-hover:bg-blue-600 transition-colors">
+                                            <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.076 60.076 0 011.5-6v2.406a4.5 4.5 0 01-3.75-4.383V18.75zm12.75-9.75h.008v.008h-.008V9zm4.5 0h.008v.008h-.008V9zm-2.25 0h.008v.008h-.008V9zm-4.5 0h.008v.008h-.008V9zm-4.5 0h.008v.008h-.008V9zm-2.25 0h.008v.008h-.008V9z" /></svg>
                                         </div>
-                                        <h3 class="text-xl font-semibold text-blue-800">Keuangan & Akuntansi</h3>
+                                        <h3 class="text-xl font-bold text-blue-800 group-hover:text-blue-900">Fondasi Keuangan</h3>
                                     </div>
-                                    <p class="mt-3 text-gray-600 text-sm">Hitung HPP, Laba Bersih, BEP, dan arus kas dengan mudah. Fondasi finansial yang kuat.</p>
-                                    <a href="#" class="nav-item mt-3 block text-blue-600 font-medium hover:text-blue-800 text-sm" data-calculator="HPP">Mulai Hitung HPP &rarr;</a>
+                                    <p class="mt-4 text-gray-600 text-sm">Hitung HPP, Laba Bersih, BEP, dan susun laporan arus kas. Klik untuk menuju Kalkulator HPP.</p>
+                                    <span class="mt-3 block text-blue-600 font-medium text-sm group-hover:text-blue-800 transition-colors">Akses Cepat &rarr;</span>
                                 </div>
                                 
                                 <!-- Card 2: Investasi & Pembiayaan -->
-                                <div class="p-5 bg-amber-50 border border-amber-200 rounded-xl shadow-lg transition-transform transform hover:scale-[1.02]">
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-amber-500 rounded-full text-white">
-                                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M12 6a2.25 2.25 0 00-2.25 2.25V18m0 0v-3.75m0-4.5a2.25 2.25 0 012.25-2.25h2.25a2.25 2.25 0 012.25 2.25v3.75m0 0h3.75M12 6a2.25 2.25 0 012.25 2.25v3.75m0 0v3.75m0 0H7.5" /></svg>
+                                <div class="group p-6 bg-amber-50 border border-amber-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer nav-item" data-calculator="NPV">
+                                    <div class="flex items-center gap-4">
+                                        <div class="p-3 bg-amber-500 rounded-full text-white group-hover:bg-amber-600 transition-colors">
+                                            <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M12 6a2.25 2.25 0 00-2.25 2.25V18m0 0v-3.75m0-4.5a2.25 2.25 0 012.25-2.25h2.25a2.25 2.25 0 012.25 2.25v3.75m0 0h3.75M12 6a2.25 2.25 0 012.25 2.25v3.75m0 0v3.75m0 0H7.5" /></svg>
                                         </div>
-                                        <h3 class="text-xl font-semibold text-amber-800">Investasi & Pinjaman</h3>
+                                        <h3 class="text-xl font-bold text-amber-800 group-hover:text-amber-900">Analisis Investasi</h3>
                                     </div>
-                                    <p class="mt-3 text-gray-600 text-sm">Analisis kelayakan investasi (NPV, IRR) dan hitung cicilan pinjaman (Anuitas) dan bunga majemuk.</p>
-                                    <a href="#" class="nav-item mt-3 block text-amber-600 font-medium hover:text-amber-800 text-sm" data-calculator="NPV">Mulai Hitung NPV &rarr;</a>
+                                    <p class="mt-4 text-gray-600 text-sm">Hitung NPV, IRR, ROI, dan Cicilan Anuitas untuk proyek atau pinjaman modal baru. Klik untuk menuju Kalkulator NPV.</p>
+                                    <span class="mt-3 block text-amber-600 font-medium text-sm group-hover:text-amber-800 transition-colors">Akses Cepat &rarr;</span>
                                 </div>
                                 
                                 <!-- Card 3: Efisiensi & Operasional -->
-                                <div class="p-5 bg-teal-50 border border-teal-200 rounded-xl shadow-lg transition-transform transform hover:scale-[1.02]">
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-teal-500 rounded-full text-white">
-                                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-10.5m-5.25 15l-4.5-4.5m10.5-10.5m4.5 4.5" /></svg>
+                                <div class="group p-6 bg-green-50 border border-green-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer nav-item" data-calculator="ROI">
+                                    <div class="flex items-center gap-4">
+                                        <div class="p-3 bg-green-500 rounded-full text-white group-hover:bg-green-600 transition-colors">
+                                            <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-10.5m-5.25 15l-4.5-4.5m10.5-10.5m4.5 4.5" /></svg>
                                         </div>
-                                        <h3 class="text-xl font-semibold text-teal-800">Efisiensi & Rasio</h3>
+                                        <h3 class="text-xl font-bold text-green-800 group-hover:text-green-900">Rasio & Efisiensi</h3>
                                     </div>
-                                    <p class="mt-3 text-gray-600 text-sm">Ukur performa bisnis Anda: hitung ROI, Margin Laba, Inventory Turnover, dan Rasio Lancar (Current Ratio).</p>
-                                    <a href="#" class="nav-item mt-3 block text-teal-600 font-medium hover:text-teal-800 text-sm" data-calculator="ROI">Mulai Hitung ROI &rarr;</a>
+                                    <p class="mt-4 text-gray-600 text-sm">Ukur performa bisnis Anda: hitung Margin Laba, Current Ratio, dan Inventory Turnover. Klik untuk menuju Kalkulator ROI.</p>
+                                    <span class="mt-3 block text-green-600 font-medium text-sm group-hover:text-green-800 transition-colors">Akses Cepat &rarr;</span>
                                 </div>
                             </div>
                             <!-- END NEW: Summary Cards Grid -->
 
                             <!-- Footer/Settings Section -->
-                            <div class="mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between">
-                                <p class="text-sm text-gray-500 mb-4 sm:mb-0">Aplikasi ini dirancang untuk mempermudah pengambilan keputusan cepat.</p>
-                                <div class="flex items-center gap-4">
-                                    <button id="clear-history-homepage-btn" class="text-sm text-red-600 hover:text-red-700 font-medium">
-                                        Bersihkan Riwayat Cepat
-                                    </button>
-                                    <label for="image-upload" class="cursor-pointer inline-flex items-center bg-gray-100 text-gray-600 font-semibold px-3 py-1.5 rounded-lg shadow-sm hover:bg-gray-200 transition-colors text-sm">
-                                        <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l1.5-1.5 6.75 6.75 3-3 4.5 4.5m4.5-15.75l-7.5-7.5m1.5-1.5m6-6l-7.5 7.5" /></svg>
-                                        Ubah Tema Visual
-                                    </label>
-                                    <input type="file" id="image-upload" class="hidden" accept="image/*">
-                                </div>
+                            <div class="mt-12 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between">
+                                <p class="text-sm text-gray-500 mb-4 sm:mb-0">Didesain untuk mempermudah pengambilan keputusan cepat dan akurat.</p>
+                                <button id="clear-history-homepage-btn" class="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">
+                                    Bersihkan Semua Riwayat
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -214,9 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let history = [];
     const HISTORY_KEY = 'entrepreneurCalcHistory';
-    const IMAGE_KEY = 'dashboardImage'; // Kunci ini sekarang tidak digunakan untuk gambar, tetapi untuk latar belakang.
 
-    // Data untuk semua kalkulator dan kategorinya
+    // Data untuk semua kalkulator dan kategorinya (tetap sama dengan sebelumnya)
     const categories = {
         "Dasar Keuangan & Akuntansi": {
             "HPP": {
@@ -557,9 +550,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const saveHistory = () => localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     const loadHistory = () => history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
     
-    // Fungsi loadDashboardImage dihapus karena tidak lagi menggunakan gambar placeholder, melainkan opsi "Ubah Tema Visual"
-    const loadDashboardImage = () => { /* Dihapus */ };
-    
     // --- Fungsi UI ---
     const openMenu = () => {
         sidebar.classList.remove('-translate-x-full');
@@ -573,20 +563,8 @@ document.addEventListener('DOMContentLoaded', function () {
         mainContent.classList.remove('lg:ml-72');
     };
     
-    // Mengganti warna latar belakang body (visual theme)
-    const changeTheme = (imageUrl) => {
-        if (imageUrl) {
-            document.body.style.backgroundImage = `url(${imageUrl})`;
-            document.body.style.backgroundSize = 'cover';
-            document.body.style.backgroundAttachment = 'fixed';
-        } else {
-            document.body.style.backgroundImage = '';
-            document.body.style.backgroundColor = '#f7f7f7'; // Warna default
-        }
-        localStorage.setItem(IMAGE_KEY, imageUrl || '');
-    };
-
-
+    // Fungsi changeTheme dan loadDashboardImage (dihapus/dinonaktifkan)
+    
     const initializeUI = () => {
         // Buat Navigasi Sidebar
         const dashboardLink = document.createElement('a');
@@ -675,10 +653,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // Tombol Bersihkan Riwayat (di Homepage)
         document.getElementById('clear-history-homepage-btn').addEventListener('click', () => {
-           if(confirm('Anda yakin ingin menghapus semua riwayat?')) {
+           // Ganti alert dengan confirm
+           if(confirm('Anda yakin ingin menghapus semua riwayat? Tindakan ini tidak dapat dibatalkan.')) {
                history = [];
                saveHistory();
-               // Tambahkan notifikasi jika diperlukan
                alert('Riwayat berhasil dibersihkan!');
            }
         });
@@ -699,7 +677,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('bg-teal-700', 'font-semibold'));
                 document.querySelectorAll('.calculator-card').forEach(card => card.classList.remove('active'));
                 
-                navItem.classList.add('bg-teal-700', 'font-semibold');
+                // Tambahkan styling aktif hanya jika bukan card ringkasan di welcome-screen
+                if (!navItem.closest('#welcome-screen')) {
+                    navItem.classList.add('bg-teal-700', 'font-semibold');
+                }
+                
                 const targetCard = document.getElementById(`calc-${calculatorId}`);
 
                 if (calculatorId === 'dashboard') {
@@ -707,11 +689,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     headerTitle.textContent = "Dashboard";
                 } else if (targetCard) {
                     targetCard.classList.add('active');
-                    // Ambil judul dari navItem, atau dari details jika navItem adalah link summary card
+                    // Tentukan judul header
                     let title = navItem.textContent.trim();
-                    if (title.endsWith('→')) title = categories[navItem.closest('.calculator-card')?.id.replace('calc-', '')]?.title || 'Dashboard';
-                    else if (calculatorId !== 'history' && categories[Object.keys(categories).find(cat => Object.keys(categories[cat]).includes(calculatorId))]?.[calculatorId]) {
-                        title = categories[Object.keys(categories).find(cat => Object.keys(categories[cat]).includes(calculatorId))][calculatorId].title;
+                    if (title.endsWith('→')) { // Jika diklik dari summary card
+                        const calcDetails = categories[Object.keys(categories).find(cat => Object.keys(categories[cat]).includes(calculatorId))][calculatorId];
+                        title = calcDetails.title;
+                    } else if (calculatorId !== 'history') { // Jika diklik dari sidebar
+                        const calcDetails = categories[Object.keys(categories).find(cat => Object.keys(categories[cat]).includes(calculatorId))][calculatorId];
+                        title = calcDetails.title;
                     }
                     headerTitle.textContent = title;
                 } else if (calculatorId === 'history') {
@@ -721,19 +706,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (window.innerWidth < 1024) closeMenu();
-            }
-        });
-        
-        // Image Upload (Untuk mengubah background/tema visual)
-        const imageUploadInput = document.getElementById('image-upload');
-        imageUploadInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    changeTheme(event.target.result);
-                }
-                reader.readAsDataURL(file);
             }
         });
         
@@ -805,8 +777,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         
         document.getElementById('clear-history-btn').addEventListener('click', () => {
-           // Mengganti alert() dengan konfirmasi menggunakan confirm()
-           if(confirm('Anda yakin ingin menghapus semua riwayat?')) {
+           if(confirm('Anda yakin ingin menghapus semua riwayat? Tindakan ini tidak dapat dibatalkan.')) {
                history = [];
                saveHistory();
                renderHistory();
@@ -847,11 +818,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     loadHistory();
-    // Mengambil tema visual yang tersimpan saat load
-    const savedTheme = localStorage.getItem(IMAGE_KEY);
-    if (savedTheme) {
-        changeTheme(savedTheme);
-    }
     initializeUI();
     addEventListeners();
 });
