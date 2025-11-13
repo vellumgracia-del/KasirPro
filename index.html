@@ -1,826 +1,828 @@
+
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Pengusaha v5</title>
-    <!-- Menggunakan Tailwind CSS untuk styling -->
+    <title>Sistem Kasir Pro</title>
+    <!-- Memuat Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Menggunakan Font Inter dari Google Fonts -->
+    <!-- Memuat font Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Icon untuk tab browser -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💹</text></svg>">
+    <!-- Icon (Lucide) -->
+    <!-- Kita akan menggunakan SVG inline untuk ikon navigasi agar lebih cepat -->
+
     <style>
-        /* Style kustom tambahan */
+        /* Menggunakan font Inter sebagai default */
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            background-color: #f7f7f7; /* Mengunci latar belakang ke warna netral */
         }
-        .calculator-card {
+        /* Custom scrollbar */
+        #cart-items-container::-webkit-scrollbar,
+        .page-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        #cart-items-container::-webkit-scrollbar-track,
+        .page-content::-webkit-scrollbar-track {
+            background: #1e293b; /* slate-800 */
+        }
+        #cart-items-container::-webkit-scrollbar-thumb,
+        .page-content::-webkit-scrollbar-thumb {
+            background: #475569; /* slate-600 */
+            border-radius: 3px;
+        }
+        #cart-items-container::-webkit-scrollbar-thumb:hover,
+        .page-content::-webkit-scrollbar-thumb:hover {
+            background: #64748b; /* slate-500 */
+        }
+        
+        /* Menyembunyikan halaman yang tidak aktif */
+        .page-content.hidden {
             display: none;
-        }
-        .calculator-card.active {
-            display: block;
-        }
-        /* Style untuk scrollbar agar lebih modern */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #a0a0a0;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #888;
-        }
-        /* Animasi */
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .pulse-float {
-            animation: pulseFloat 4s ease-in-out infinite;
-        }
-        @keyframes pulseFloat {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-10px) scale(1.03); }
-        }
-        /* Transisi untuk sidebar */
-        #sidebar {
-            transition: transform 0.3s ease-in-out;
-        }
-        /* Style untuk menu accordion */
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-in-out;
-        }
-        .accordion-header.active + .accordion-content {
-            max-height: 500px; /* Sesuaikan jika item lebih banyak */
-        }
-        .accordion-header .chevron {
-            transition: transform 0.3s ease-in-out;
-        }
-        .accordion-header.active .chevron {
-            transform: rotate(90deg);
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-slate-900 text-slate-200">
 
-    <!-- Landing Screen -->
-    <div id="landing-screen" class="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center z-50 transition-opacity duration-500">
-        <div class="text-center p-4">
-            <!-- Logo Anda -->
-            <svg class="mx-auto h-20 w-auto text-teal-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 3h.008v.008H8.25v-.008Zm0 3h.008v.008H8.25v-.008Zm3.75 0h.008v.008h-.008v-.008Zm0-3h.008v.008h-.008v-.008Zm0-3h.008v.008h-.008v-.008Zm3.75 0h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm-7.5-6.75h.008v.008H8.25v-.008Zm.75 0h.008v.008h-.008v-.008Zm.75 0h.008v.008h-.008v-.008Zm.75 0h.008v.008h-.008v-.008Zm.75 0h.008v.008h-.008v-.008Zm.75 0h.008v.008h-.008v-.008Z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75C21 20.496 20.496 21 19.875 21H4.125A1.125 1.125 0 0 1 3 19.875v-6.75ZM19.5 3.75h.008v.008h-.008v-.008Z" />
-            </svg>
-            <h1 class="mt-6 text-4xl font-bold tracking-tight text-white sm:text-5xl">Kalkulator Pengusaha</h1>
-            <p class="mt-4 text-lg text-gray-300">Solusi lengkap perhitungan bisnis Anda, kini lebih powerful.</p>
-            <button id="enter-app-btn" class="mt-8 rounded-md bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 transition-transform transform hover:scale-105">
-                Masuk ke Aplikasi
-            </button>
+    <div class="flex h-screen overflow-hidden">
+    
+        <!-- Navigasi Sidebar -->
+        <nav class="w-20 bg-slate-800 flex flex-col items-center py-4 space-y-4 shadow-lg z-10">
+            <!-- Logo/Brand -->
+            <div class="w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7V2h5l2 5-2 5-5-5Z"/><path d="m14 7 5 5-5 5V7Z"/><path d="M9 12 7 7l5 5-5 5Z"/><path d="m16 12 5 5-5-5-5 5Z"/></svg>
+            </div>
+            
+            <ul class="flex flex-col space-y-2">
+                <!-- Tombol Navigasi: Kasir (Aktif by default) -->
+                <li>
+                    <button id="nav-kasir" data-page="halaman-kasir" class="nav-btn bg-cyan-600 text-white p-3 rounded-lg group relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span class="absolute left-full ml-3 px-2 py-1 bg-slate-700 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                          Kasir
+                        </span>
+                    </button>
+                </li>
+                <!-- Tombol Navigasi: Produk -->
+                <li>
+                    <button id="nav-produk" data-page="halaman-produk" class="nav-btn text-slate-400 hover:bg-slate-700 hover:text-white p-3 rounded-lg group relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line><line x1="12" y1="12" x2="7" y2="9.5"></line><line x1="12" y1="12" x2="17" y2="9.5"></line></svg>
+                        <span class="absolute left-full ml-3 px-2 py-1 bg-slate-700 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                          Produk
+                        </span>
+                    </button>
+                </li>
+                <!-- Tombol Navigasi: Riwayat -->
+                <li>
+                    <button id="nav-riwayat" data-page="halaman-riwayat" class="nav-btn text-slate-400 hover:bg-slate-700 hover:text-white p-3 rounded-lg group relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                        <span class="absolute left-full ml-3 px-2 py-1 bg-slate-700 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                          Riwayat
+                        </span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Konten Utama (Wrapper untuk semua halaman) -->
+        <div class="flex-1 h-screen overflow-hidden">
+        
+            <!-- Halaman 1: Kasir (Yang sudah ada) -->
+            <div id="halaman-kasir" class="page-content flex flex-col md:flex-row h-full">
+                <!-- Bagian Kiri: Produk & Kategori -->
+                <main class="w-full md:w-3/5 lg:w-2/3 h-full overflow-y-auto p-6">
+                    <!-- Header & Search -->
+                    <header class="mb-6">
+                        <h1 class="text-3xl font-bold text-white">Toko Sejahtera</h1>
+                        <p class="text-lg text-slate-400">Selamat datang, Kasir!</p>
+                        
+                        <!-- Kotak Pencarian -->
+                        <div class="relative mt-4">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </span>
+                            <input 
+                                type="text" 
+                                id="search-input"
+                                placeholder="Cari produk..."
+                                class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+                            >
+                        </div>
+                    </header>
+
+                    <!-- Filter Kategori -->
+                    <nav class="mb-6">
+                        <ul class="flex space-x-2" id="kategori-filter">
+                            <li><button data-kategori="semua" class="kategori-btn bg-cyan-600 text-white px-4 py-2 rounded-full font-semibold">Semua</button></li>
+                            <li><button data-kategori="makanan" class="kategori-btn bg-slate-700 text-slate-300 px-4 py-2 rounded-full font-semibold hover:bg-slate-600">Makanan</button></li>
+                            <li><button data-kategori="minuman" class="kategori-btn bg-slate-700 text-slate-300 px-4 py-2 rounded-full font-semibold hover:bg-slate-600">Minuman</button></li>
+                            <li><button data-kategori="snack" class="kategori-btn bg-slate-700 text-slate-300 px-4 py-2 rounded-full font-semibold hover:bg-slate-600">Snack</button></li>
+                        </ul>
+                    </nav>
+
+                    <!-- Grid Produk -->
+                    <section id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <!-- Produk akan dimuat oleh JavaScript -->
+                    </section>
+                </main>
+
+                <!-- Bagian Kanan: Keranjang (Struk) -->
+                <aside class="w-full md:w-2/5 lg:w-1/3 h-full bg-slate-800 border-l border-slate-700 flex flex-col">
+                    <!-- Header Keranjang -->
+                    <header class="p-6 border-b border-slate-700">
+                        <h2 class="text-2xl font-bold text-white">Pesanan Saat Ini</h2>
+                    </header>
+
+                    <!-- Daftar Item Keranjang -->
+                    <div id="cart-items-container" class="flex-1 overflow-y-auto p-6">
+                        <!-- Pesan saat keranjang kosong -->
+                        <div id="cart-empty-message" class="flex flex-col items-center justify-center h-full text-slate-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                            <p class="mt-2 text-lg">Keranjang kosong</p>
+                            <p class="text-sm">Silakan pilih produk...</p>
+                        </div>
+                    </div>
+
+                    <!-- Total & Pembayaran -->
+                    <footer class="p-6 bg-slate-900 border-t border-slate-700">
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between text-slate-300">
+                                <span>Subtotal</span>
+                                <span id="subtotal" class="font-medium">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>Pajak (10%)</span>
+                                <span id="pajak" class="font-medium">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-white text-xl font-bold">
+                                <span>Total</span>
+                                <span id="total">Rp 0</span>
+                            </div>
+                        </div>
+                        <div class="relative mb-4">
+                            <label for="jumlah-bayar" class="text-sm text-slate-400">Jumlah Bayar</label>
+                            <span class="absolute left-3 bottom-2.5 text-lg text-slate-400">Rp</span>
+                            <input 
+                                type="text" 
+                                id="jumlah-bayar"
+                                class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white text-lg font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                placeholder="0"
+                            >
+                        </div>
+                        <div class="mb-4 p-3 bg-slate-800 rounded-lg text-center">
+                            <span class="text-sm text-slate-400">Kembalian:</span>
+                            <span id="kembalian" class="ml-2 text-lg font-bold text-cyan-400">Rp 0</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="btn-bayar" class="w-full bg-cyan-600 text-white font-bold py-3 rounded-lg hover:bg-cyan-500 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Proses Bayar
+                            </button>
+                            <button id="btn-baru" class="w-full bg-slate-700 text-slate-300 font-bold py-3 rounded-lg hover:bg-slate-600 transition duration-200">
+                                Mulai Baru
+                            </button>
+                        </div>
+                    </footer>
+                </aside>
+            </div>
+
+            <!-- Halaman 2: Manajemen Produk (Hidden by default) -->
+            <div id="halaman-produk" class="page-content hidden h-full overflow-y-auto p-8">
+                <h1 class="text-3xl font-bold text-white mb-6">Manajemen Produk</h1>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Kolom Kiri: Form Tambah Produk -->
+                    <div class="lg:col-span-1 bg-slate-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-semibold text-white mb-4">Tambah Produk Baru</h2>
+                        <form id="form-tambah-produk" class="space-y-4">
+                            <div>
+                                <label for="prod-nama" class="block text-sm font-medium text-slate-300 mb-1">Nama Produk</label>
+                                <input type="text" id="prod-nama" required class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            </div>
+                            <div>
+                                <label for="prod-kategori" class="block text-sm font-medium text-slate-300 mb-1">Kategori</label>
+                                <select id="prod-kategori" required class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                    <option value="makanan">Makanan</option>
+                                    <option value="minuman">Minuman</option>
+                                    <option value="snack">Snack</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="prod-harga" class="block text-sm font-medium text-slate-300 mb-1">Harga</label>
+                                <input type="number" id="prod-harga" required min="0" class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            </div>
+                            <div>
+                                <label for="prod-stok" class="block text-sm font-medium text-slate-300 mb-1">Stok Awal</label>
+                                <input type="number" id="prod-stok" required min="0" class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            </div>
+                             <div>
+                                <label for="prod-gambar-file" class="block text-sm font-medium text-slate-300 mb-1">Gambar Produk</label>
+                                <input type="file" id="prod-gambar-file" accept="image/*" class="w-full text-sm text-slate-400
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-full file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-cyan-600 file:text-white
+                                    hover:file:bg-cyan-500">
+                            </div>
+                            <button type="submit" class="w-full bg-cyan-600 text-white font-bold py-3 rounded-lg hover:bg-cyan-500 transition duration-200">
+                                Tambahkan Produk
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Kolom Kanan: Daftar Produk -->
+                    <div class="lg:col-span-2 bg-slate-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-semibold text-white mb-4">Daftar Produk Saat Ini</h2>
+                        <div id="daftar-produk-admin" class="space-y-3 max-h-[600px] overflow-y-auto">
+                            <!-- Daftar produk admin akan dimuat oleh JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Halaman 3: Riwayat Penjualan (Hidden by default) -->
+            <div id="halaman-riwayat" class="page-content hidden h-full overflow-y-auto p-8">
+                <h1 class="text-3xl font-bold text-white mb-6">Riwayat Penjualan</h1>
+                <div id="riwayat-container" class="space-y-4">
+                    <!-- Pesan kosong -->
+                    <div id="riwayat-empty-message" class="text-slate-500 text-center py-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                        <p class="text-lg">Belum ada riwayat penjualan.</p>
+                    </div>
+                    <!-- Riwayat akan dimuat oleh JavaScript -->
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Main App Container -->
-    <div id="main-app" class="hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-gray-800 text-white flex flex-col p-4 border-r border-gray-700 w-72 transform -translate-x-full z-40 overflow-y-auto">
-            <div class="flex items-center justify-between gap-3 mb-6 px-2">
-                <h2 class="text-xl font-bold">Menu Kalkulator</h2>
-                <button id="close-menu-btn" class="p-1 rounded-full hover:bg-gray-700 lg:hidden">
-                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
+    <!-- Modal Sukses Pembayaran (Sama seperti sebelumnya) -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden transition-opacity">
+        <div class="bg-slate-800 p-8 rounded-xl shadow-2xl text-center max-w-sm w-full transform scale-95 transition-transform">
+            <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-            <nav id="sidebar-nav" class="flex flex-col gap-1">
-                <!-- Kategori akan dimasukkan oleh JavaScript -->
-            </nav>
-            <div class="mt-auto pt-4 border-t border-gray-600">
-                <a href="#" class="nav-item flex items-center gap-3 w-full text-left p-2 rounded-lg hover:bg-gray-700 transition-colors" data-calculator="history">
-                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-                    Riwayat Perhitungan
-                </a>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main id="main-content" class="transition-all duration-300 ease-in-out">
-            <header class="sticky top-0 bg-teal-600 text-white shadow-lg z-20">
-                <div class="flex items-center p-4">
-                    <button id="open-menu-btn" class="p-2 mr-4 rounded-md hover:bg-teal-700">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                    </button>
-                    <h1 class="text-xl font-semibold">Dashboard</h1>
-                </div>
-            </header>
-            <div class="p-6 md:p-8">
-                <div id="calculator-content" class="max-w-4xl mx-auto">
-                     <div id="welcome-screen" class="calculator-card active">
-                        <div class="bg-white p-8 rounded-xl shadow-2xl overflow-hidden border border-gray-100">
-                            <h1 class="text-4xl font-extrabold text-gray-900 text-center tracking-tight">Kalkulator Bisnis Premium</h1>
-                            <p class="mt-4 text-xl text-gray-500 text-center font-light">Akses cepat ke lebih dari 20 alat hitung finansial dan operasional penting.</p>
-
-                            <!-- NEW: Enhanced Summary Cards Grid -->
-                            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                                
-                                <!-- Card 1: Keuangan & Akuntansi -->
-                                <div class="group p-6 bg-blue-50 border border-blue-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer nav-item" data-calculator="HPP">
-                                    <div class="flex items-center gap-4">
-                                        <div class="p-3 bg-blue-500 rounded-full text-white group-hover:bg-blue-600 transition-colors">
-                                            <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.076 60.076 0 011.5-6v2.406a4.5 4.5 0 01-3.75-4.383V18.75zm12.75-9.75h.008v.008h-.008V9zm4.5 0h.008v.008h-.008V9zm-2.25 0h.008v.008h-.008V9zm-4.5 0h.008v.008h-.008V9zm-4.5 0h.008v.008h-.008V9zm-2.25 0h.008v.008h-.008V9z" /></svg>
-                                        </div>
-                                        <h3 class="text-xl font-bold text-blue-800 group-hover:text-blue-900">Fondasi Keuangan</h3>
-                                    </div>
-                                    <p class="mt-4 text-gray-600 text-sm">Hitung HPP, Laba Bersih, BEP, dan susun laporan arus kas. Klik untuk menuju Kalkulator HPP.</p>
-                                    <span class="mt-3 block text-blue-600 font-medium text-sm group-hover:text-blue-800 transition-colors">Akses Cepat &rarr;</span>
-                                </div>
-                                
-                                <!-- Card 2: Investasi & Pembiayaan -->
-                                <div class="group p-6 bg-amber-50 border border-amber-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer nav-item" data-calculator="NPV">
-                                    <div class="flex items-center gap-4">
-                                        <div class="p-3 bg-amber-500 rounded-full text-white group-hover:bg-amber-600 transition-colors">
-                                            <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M12 6a2.25 2.25 0 00-2.25 2.25V18m0 0v-3.75m0-4.5a2.25 2.25 0 012.25-2.25h2.25a2.25 2.25 0 012.25 2.25v3.75m0 0h3.75M12 6a2.25 2.25 0 012.25 2.25v3.75m0 0v3.75m0 0H7.5" /></svg>
-                                        </div>
-                                        <h3 class="text-xl font-bold text-amber-800 group-hover:text-amber-900">Analisis Investasi</h3>
-                                    </div>
-                                    <p class="mt-4 text-gray-600 text-sm">Hitung NPV, IRR, ROI, dan Cicilan Anuitas untuk proyek atau pinjaman modal baru. Klik untuk menuju Kalkulator NPV.</p>
-                                    <span class="mt-3 block text-amber-600 font-medium text-sm group-hover:text-amber-800 transition-colors">Akses Cepat &rarr;</span>
-                                </div>
-                                
-                                <!-- Card 3: Efisiensi & Operasional -->
-                                <div class="group p-6 bg-green-50 border border-green-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer nav-item" data-calculator="ROI">
-                                    <div class="flex items-center gap-4">
-                                        <div class="p-3 bg-green-500 rounded-full text-white group-hover:bg-green-600 transition-colors">
-                                            <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-10.5m-5.25 15l-4.5-4.5m10.5-10.5m4.5 4.5" /></svg>
-                                        </div>
-                                        <h3 class="text-xl font-bold text-green-800 group-hover:text-green-900">Rasio & Efisiensi</h3>
-                                    </div>
-                                    <p class="mt-4 text-gray-600 text-sm">Ukur performa bisnis Anda: hitung Margin Laba, Current Ratio, dan Inventory Turnover. Klik untuk menuju Kalkulator ROI.</p>
-                                    <span class="mt-3 block text-green-600 font-medium text-sm group-hover:text-green-800 transition-colors">Akses Cepat &rarr;</span>
-                                </div>
-                            </div>
-                            <!-- END NEW: Summary Cards Grid -->
-
-                            <!-- Footer/Settings Section -->
-                            <div class="mt-12 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between">
-                                <p class="text-sm text-gray-500 mb-4 sm:mb-0">Didesain untuk mempermudah pengambilan keputusan cepat dan akurat.</p>
-                                <button id="clear-history-homepage-btn" class="text-sm text-red-600 hover:text-red-700 font-medium transition-colors">
-                                    Bersihkan Semua Riwayat
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Overlay for mobile menu -->
-        <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+            <h2 class="text-2xl font-bold text-white mb-2">Pembayaran Berhasil!</h2>
+            <p class="text-lg text-slate-300 mb-1">Total Transaksi:</p>
+            <p id="modal-total" class="text-3xl font-bold text-cyan-400 mb-4">Rp 0</p>
+            <p class="text-lg text-slate-300 mb-1">Kembalian:</p>
+            <p id="modal-kembalian" class="text-3xl font-bold text-white mb-6">Rp 0</p>
+            <button id="btn-tutup-modal" class="w-full bg-cyan-600 text-white font-bold py-3 rounded-lg hover:bg-cyan-500 transition duration-200">
+                Tutup
+            </button>
+        </div>
+    </div>
+    
+    <!-- Notifikasi Kustom -->
+    <div id="notifikasi" class="fixed top-5 right-5 bg-red-600 text-white px-5 py-3 rounded-lg shadow-lg hidden transition-all duration-300 z-[100]">
+        <!-- Pesan notifikasi akan diisi oleh JS -->
     </div>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // DOM Elements
-    const landingScreen = document.getElementById('landing-screen');
-    const enterAppBtn = document.getElementById('enter-app-btn');
-    const mainApp = document.getElementById('main-app');
-    const sidebar = document.getElementById('sidebar');
-    const sidebarNav = document.getElementById('sidebar-nav');
-    const calculatorContent = document.getElementById('calculator-content');
-    const openMenuBtn = document.getElementById('open-menu-btn');
-    const closeMenuBtn = document.getElementById('close-menu-btn');
-    const menuOverlay = document.getElementById('menu-overlay');
-    const mainContent = document.getElementById('main-content');
-    const headerTitle = document.querySelector('#main-content header h1');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
 
-    let history = [];
-    const HISTORY_KEY = 'entrepreneurCalcHistory';
+            // === DATABASE PRODUK (DENGAN STOK) ===
+            let allProducts = [
+                { id: 1, nama: "Nasi Goreng Spesial", kategori: "makanan", harga: 25000, stok: 50, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Nasi+Goreng" },
+                { id: 2, nama: "Ayam Bakar Madu", kategori: "makanan", harga: 35000, stok: 30, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Ayam+Bakar" },
+                { id: 3, nama: "Soto Ayam Lamongan", kategori: "makanan", harga: 20000, stok: 40, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Soto+Ayam" },
+                { id: 4, nama: "Es Teh Manis", kategori: "minuman", harga: 5000, stok: 100, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Es+Teh" },
+                { id: 5, nama: "Jus Alpukat", kategori: "minuman", harga: 15000, stok: 20, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Jus+Alpukat" },
+                { id: 6, nama: "Kopi Hitam", kategori: "minuman", harga: 8000, stok: 80, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Kopi+Hitam" },
+                { id: 7, nama: "Kentang Goreng", kategori: "snack", harga: 12000, stok: 60, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Kentang" },
+                { id: 8, nama: "Roti Bakar Coklat", kategori: "snack", harga: 18000, stok: 25, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Roti+Bakar" },
+                { id: 9, nama: "Pisang Goreng Keju", kategori: "snack", harga: 15000, stok: 30, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Pisang+Goreng" },
+                { id: 10, nama: "Air Mineral", kategori: "minuman", harga: 4000, stok: 200, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Air+Mineral" },
+                { id: 11, nama: "Bakmi Jawa", kategori: "makanan", harga: 22000, stok: 35, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Bakmi+Jawa" },
+                { id: 12, nama: "Singkong Keju", kategori: "snack", harga: 10000, stok: 0, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Singkong" }, // Contoh stok habis
+            ];
 
-    // Data untuk semua kalkulator dan kategorinya (tetap sama dengan sebelumnya)
-    const categories = {
-        "Dasar Keuangan & Akuntansi": {
-            "HPP": {
-                title: "Harga Pokok Penjualan (HPP)",
-                description: "Hitung biaya langsung yang timbul dari produksi barang atau jasa.",
-                inputs: [
-                    { id: "hpp-persediaan-awal", label: "Persediaan Awal", type: "number" },
-                    { id: "hpp-pembelian-bersih", label: "Pembelian Bersih", type: "number" },
-                    { id: "hpp-persediaan-akhir", label: "Persediaan Akhir", type: "number" },
-                ],
-                calculation: (v) => v['hpp-persediaan-awal'] + v['hpp-pembelian-bersih'] - v['hpp-persediaan-akhir'],
-                resultLabel: "Harga Pokok Penjualan (HPP)"
-            },
-            "BEP": {
-                title: "Break Even Point (BEP)",
-                description: "Tentukan titik di mana total pendapatan sama dengan total biaya.",
-                inputs: [
-                    { id: "bep-biaya-tetap", label: "Total Biaya Tetap", type: "number" },
-                    { id: "bep-harga-jual", label: "Harga Jual per Unit", type: "number" },
-                    { id: "bep-biaya-variabel", label: "Biaya Variabel per Unit", type: "number" },
-                ],
-                calculation: (v) => {
-                    const denominator = v['bep-harga-jual'] - v['bep-biaya-variabel'];
-                    if (denominator <= 0) return { error: "Harga jual harus lebih besar dari biaya variabel." };
-                    const bepUnit = v['bep-biaya-tetap'] / denominator;
-                    const bepPrice = bepUnit * v['bep-harga-jual'];
-                    return `BEP Unit: ${Math.ceil(bepUnit).toLocaleString('id-ID')} unit<br>BEP Rupiah: ${formatCurrency(bepPrice)}`;
-                },
-                resultLabel: "Hasil Titik Impas (BEP)"
-            },
-            "LabaKotor": {
-                title: "Laba Kotor",
-                description: "Hitung selisih antara pendapatan dari penjualan dengan harga pokok penjualan.",
-                inputs: [
-                    { id: "lk-penjualan", label: "Total Penjualan (Pendapatan)", type: "number" },
-                    { id: "lk-hpp", label: "Harga Pokok Penjualan (HPP)", type: "number" },
-                ],
-                calculation: (v) => v['lk-penjualan'] - v['lk-hpp'],
-                resultLabel: "Laba Kotor"
-            },
-            "LabaBersih": {
-                title: "Laba Bersih",
-                description: "Hitung laba yang tersisa setelah dikurangi semua beban, termasuk pajak.",
-                inputs: [
-                    { id: "lb-laba-kotor", label: "Laba Kotor", type: "number" },
-                    { id: "lb-beban-ops", label: "Beban Operasional", type: "number" },
-                    { id: "lb-pajak", label: "Pajak", type: "number" },
-                ],
-                calculation: (v) => v['lb-laba-kotor'] - v['lb-beban-ops'] - v['lb-pajak'],
-                resultLabel: "Laba Bersih"
-            },
-            "ArusKas": {
-                title: "Arus Kas (Cash Flow)",
-                description: "Hitung selisih antara total kas yang masuk dengan total kas yang keluar.",
-                inputs: [
-                    { id: "ak-kas-masuk", label: "Total Kas Masuk", type: "number" },
-                    { id: "ak-kas-keluar", label: "Total Kas Keluar", type: "number" },
-                ],
-                calculation: (v) => v['ak-kas-masuk'] - v['ak-kas-keluar'],
-                resultLabel: "Arus Kas Bersih"
-            },
-            "Depresiasi": {
-                title: "Depresiasi (Metode Garis Lurus)",
-                description: "Hitung penyusutan nilai aset tetap selama umur ekonomisnya.",
-                inputs: [
-                    { id: "d-harga-perolehan", label: "Harga Perolehan Aset", type: "number" },
-                    { id: "d-nilai-sisa", label: "Nilai Sisa (Residu)", type: "number" },
-                    { id: "d-umur-ekonomis", label: "Umur Ekonomis (Tahun)", type: "number" },
-                ],
-                calculation: (v) => {
-                    if (v['d-umur-ekonomis'] === 0) return { error: "Umur ekonomis tidak boleh nol." };
-                    const depr = (v['d-harga-perolehan'] - v['d-nilai-sisa']) / v['d-umur-ekonomis'];
-                    return `${formatCurrency(depr)} / tahun`;
-                },
-                resultLabel: "Beban Depresiasi Tahunan"
-            }
-        },
-        "Pembiayaan, Kredit & Investasi": {
-            "Anuitas": {
-                title: "Anuitas (Cicilan Pinjaman)",
-                description: "Hitung jumlah cicilan tetap per periode untuk pinjaman.",
-                inputs: [
-                    { id: "an-pokok", label: "Jumlah Pokok Pinjaman", type: "number" },
-                    { id: "an-bunga", label: "Suku Bunga per Tahun (%)", type: "number" },
-                    { id: "an-periode", label: "Jangka Waktu (Bulan)", type: "number" },
-                ],
-                calculation: (v) => {
-                    if (v['an-periode'] === 0) return { error: "Periode tidak boleh nol." };
-                    const r = (v['an-bunga'] / 100) / 12; // Bunga bulanan
-                    if (r === 0) return v['an-pokok'] / v['an-periode'];
-                    const anuitas = v['an-pokok'] * (r * Math.pow(1 + r, v['an-periode'])) / (Math.pow(1 + r, v['an-periode']) - 1);
-                    return `${formatCurrency(anuitas)} / bulan`;
-                },
-                resultLabel: "Cicilan per Bulan"
-            },
-            "BungaTunggal": {
-                title: "Bunga Tunggal",
-                description: "Hitung bunga yang didapat dari modal pokok saja.",
-                inputs: [
-                    { id: "bt-pokok", label: "Modal Pokok", type: "number" },
-                    { id: "bt-bunga", label: "Suku Bunga per Tahun (%)", type: "number" },
-                    { id: "bt-waktu", label: "Jangka Waktu (Tahun)", type: "number" },
-                ],
-                calculation: (v) => v['bt-pokok'] * (v['bt-bunga'] / 100) * v['bt-waktu'],
-                resultLabel: "Total Bunga Tunggal"
-            },
-            "BungaMajemuk": {
-                title: "Bunga Majemuk",
-                description: "Hitung total akumulasi modal beserta bunganya dari waktu ke waktu.",
-                inputs: [
-                    { id: "bm-pokok", label: "Modal Awal (Pokok)", type: "number" },
-                    { id: "bm-bunga", label: "Suku Bunga per Periode (%)", type: "number" },
-                    { id: "bm-periode", label: "Jumlah Periode", type: "number" },
-                ],
-                calculation: (v) => {
-                    const r = v['bm-bunga'] / 100;
-                    const total = v['bm-pokok'] * Math.pow((1 + r), v['bm-periode']);
-                    const interest = total - v['bm-pokok'];
-                    return `Total Akhir: ${formatCurrency(total)}<br>Total Bunga: ${formatCurrency(interest)}`;
-                },
-                resultLabel: "Hasil Bunga Majemuk"
-            },
-            "NPV": {
-                title: "Net Present Value (NPV)",
-                description: "Hitung nilai sekarang dari arus kas masa depan untuk mengevaluasi kelayakan investasi.",
-                inputs: [
-                    { id: "npv-investasi", label: "Investasi Awal", type: "number" },
-                    { id: "npv-diskon", label: "Tingkat Diskonto (%)", type: "number" },
-                    { id: "npv-cf1", label: "Arus Kas Tahun 1", type: "number" },
-                    { id: "npv-cf2", label: "Arus Kas Tahun 2", type: "number" },
-                    { id: "npv-cf3", label: "Arus Kas Tahun 3", type: "number" },
-                    { id: "npv-cf4", label: "Arus Kas Tahun 4", type: "number" },
-                    { id: "npv-cf5", label: "Arus Kas Tahun 5", type: "number" },
-                ],
-                calculation: (v) => {
-                    const r = v['npv-diskon'] / 100;
-                    let pv = 0;
-                    for (let t = 1; t <= 5; t++) {
-                        const cf = v[`npv-cf${t}`] || 0;
-                        pv += cf / Math.pow(1 + r, t);
-                    }
-                    const npv = pv - v['npv-investasi'];
-                    const status = npv >= 0 ? '<span class="text-green-600">(Layak)</span>' : '<span class="text-red-600">(Tidak Layak)</span>';
-                    return `${formatCurrency(npv)} ${status}`;
-                },
-                resultLabel: "Net Present Value (NPV)"
-            },
-            "IRR": {
-                title: "Internal Rate of Return (IRR)",
-                description: "Hitung tingkat pengembalian internal dari suatu investasi. (Perkiraan)",
-                inputs: [
-                    { id: "irr-investasi", label: "Investasi Awal", type: "number" },
-                    { id: "irr-cf1", label: "Arus Kas Tahun 1", type: "number" },
-                    { id: "irr-cf2", label: "Arus Kas Tahun 2", type: "number" },
-                    { id: "irr-cf3", label: "Arus Kas Tahun 3", type: "number" },
-                    { id: "irr-cf4", label: "Arus Kas Tahun 4", type: "number" },
-                    { id: "irr-cf5", label: "Arus Kas Tahun 5", type: "number" },
-                ],
-                calculation: (v) => {
-                    const cfs = [-v['irr-investasi']];
-                    for (let i = 1; i <= 5; i++) cfs.push(v[`irr-cf${i}`] || 0);
-                    const calculateNPV = (rate) => cfs.reduce((acc, val, i) => acc + val / Math.pow(1 + rate, i), 0);
-                    let irr = 0.1, delta = 0.05;
-                    for (let i = 0; i < 100; i++) {
-                        let npv = calculateNPV(irr);
-                        if (Math.abs(npv) < 1e-5) break;
-                        irr += npv > 0 ? delta : -delta;
-                        delta /= 2;
-                    }
-                    return (irr > -1 && irr < 5) ? `${(irr * 100).toFixed(2)} %` : "Tidak dapat dihitung (arus kas tidak biasa).";
-                },
-                resultLabel: "Internal Rate of Return (IRR)"
-            },
-            "ROI": {
-                title: "Return on Investment (ROI)",
-                description: "Ukur efisiensi atau profitabilitas investasi.",
-                inputs: [ { id: "roi-laba", label: "Laba Bersih dari Investasi", type: "number" }, { id: "roi-investasi", label: "Biaya Investasi", type: "number" } ],
-                calculation: (v) => (v['roi-investasi'] === 0) ? { error: "Biaya investasi tidak boleh nol." } : `${((v['roi-laba'] / v['roi-investasi']) * 100).toFixed(2)} %`,
-                resultLabel: "Return on Investment (ROI)"
-            },
-            "ROE": {
-                title: "Return on Equity (ROE)",
-                description: "Ukur kemampuan perusahaan menghasilkan laba dari modal sendiri.",
-                inputs: [ { id: "roe-laba", label: "Laba Bersih Setelah Pajak", type: "number" }, { id: "roe-modal", label: "Total Modal Sendiri (Ekuitas)", type: "number" } ],
-                calculation: (v) => (v['roe-modal'] === 0) ? { error: "Modal tidak boleh nol." } : `${((v['roe-laba'] / v['roe-modal']) * 100).toFixed(2)} %`,
-                resultLabel: "Return on Equity (ROE)"
-            },
-            "ROA": {
-                title: "Return on Assets (ROA)",
-                description: "Ukur kemampuan perusahaan menghasilkan laba dari total asetnya.",
-                inputs: [ { id: "roa-laba", label: "Laba Bersih Setelah Pajak", type: "number" }, { id: "roa-aset", label: "Total Aset", type: "number" } ],
-                calculation: (v) => (v['roa-aset'] === 0) ? { error: "Aset tidak boleh nol." } : `${((v['roa-laba'] / v['roa-aset']) * 100).toFixed(2)} %`,
-                resultLabel: "Return on Assets (ROA)"
-            },
-            "PaybackPeriod": {
-                title: "Payback Period",
-                description: "Hitung waktu yang dibutuhkan untuk mengembalikan modal investasi awal.",
-                inputs: [ { id: "pp-investasi", label: "Investasi Awal", type: "number" }, { id: "pp-kas-tahunan", label: "Arus Kas Masuk Tahunan", type: "number" } ],
-                calculation: (v) => (v['pp-kas-tahunan'] <= 0) ? { error: "Arus kas tahunan harus positif." } : `${(v['pp-investasi'] / v['pp-kas-tahunan']).toFixed(2)} tahun`,
-                resultLabel: "Periode Pengembalian"
-            },
-            "EBITDA": {
-                title: "EBITDA",
-                description: "Laba sebelum Bunga, Pajak, Depresiasi, dan Amortisasi.",
-                 inputs: [ { id: "ebitda-laba-bersih", label: "Laba Bersih", type: "number" }, { id: "ebitda-pajak", label: "Beban Pajak", type: "number" }, { id: "ebitda-bunga", label: "Beban Bunga", type: "number" }, { id: "ebitda-depresiasi", label: "Depresiasi", type: "number" }, { id: "ebitda-amortisasi", label: "Amortisasi", type: "number" } ],
-                calculation: (v) => v['ebitda-laba-bersih'] + v['ebitda-pajak'] + v['ebitda-bunga'] + v['ebitda-depresiasi'] + v['ebitda-amortisasi'],
-                resultLabel: "EBITDA"
-            }
-        },
-        "Biaya Produksi & Operasional": {
-            "BiayaTotal": {
-                title: "Biaya Total",
-                description: "Hitung jumlah keseluruhan dari biaya tetap dan biaya variabel.",
-                inputs: [ { id: "bt-tetap", label: "Total Biaya Tetap", type: "number" }, { id: "bt-variabel", label: "Total Biaya Variabel", type: "number" } ],
-                calculation: (v) => v['bt-tetap'] + v['bt-variabel'],
-                resultLabel: "Biaya Total"
-            },
-            "EfisiensiProduksi": {
-                title: "Efisiensi Produksi",
-                description: "Ukur perbandingan antara output aktual dengan output standar.",
-                inputs: [ { id: "ep-aktual", label: "Output Aktual (unit)", type: "number" }, { id: "ep-standar", label: "Output Standar (unit)", type: "number" } ],
-                calculation: (v) => (v['ep-standar'] === 0) ? { error: "Output standar tidak boleh nol." } : `${((v['ep-aktual'] / v['ep-standar']) * 100).toFixed(2)} %`,
-                resultLabel: "Tingkat Efisiensi"
-            },
-            "Produktivitas": {
-                title: "Produktivitas",
-                description: "Ukur rasio antara output yang dihasilkan dengan input yang digunakan.",
-                inputs: [ { id: "p-output", label: "Jumlah Output (misal: unit)", type: "number" }, { id: "p-input", label: "Jumlah Input (misal: jam kerja)", type: "number" } ],
-                calculation: (v) => (v['p-input'] === 0) ? { error: "Input tidak boleh nol." } : `${(v['p-output'] / v['p-input']).toFixed(2)} unit per input`,
-                resultLabel: "Tingkat Produktivitas"
-            }
-        },
-        "Analisis Bisnis": {
-            "MarginLaba": {
-                title: "Margin Laba",
-                description: "Hitung persentase keuntungan dari total pendapatan.",
-                inputs: [ { id: "ml-laba", label: "Laba Bersih", type: "number" }, { id: "ml-penjualan", label: "Total Penjualan", type: "number" } ],
-                calculation: (v) => (v['ml-penjualan'] === 0) ? { error: "Penjualan tidak boleh nol." } : `${((v['ml-laba'] / v['ml-penjualan']) * 100).toFixed(2)} %`,
-                resultLabel: "Margin Laba"
-            },
-            "Markup": {
-                title: "Markup",
-                description: "Hitung persentase kenaikan harga dari HPP ke harga jual.",
-                inputs: [ { id: "m-harga-jual", label: "Harga Jual", type: "number" }, { id: "m-hpp", label: "Harga Pokok Penjualan (HPP)", type: "number" } ],
-                calculation: (v) => (v['m-hpp'] === 0) ? { error: "HPP tidak boleh nol." } : `${(((v['m-harga-jual'] - v['m-hpp']) / v['m-hpp']) * 100).toFixed(2)} %`,
-                resultLabel: "Persentase Markup"
-            },
-            "CashRatio": {
-                title: "Cash Ratio (Rasio Kas)",
-                description: "Ukur kemampuan perusahaan membayar utang jangka pendek dengan kas.",
-                inputs: [ { id: "cr-kas", label: "Total Kas & Setara Kas", type: "number" }, { id: "cr-utang-lancar", label: "Total Kewajiban Lancar", type: "number" } ],
-                calculation: (v) => (v['cr-utang-lancar'] === 0) ? { error: "Kewajiban lancar tidak boleh nol." } : `${(v['cr-kas'] / v['cr-utang-lancar']).toFixed(2)}`,
-                resultLabel: "Cash Ratio"
-            },
-            "CurrentRatio": {
-                title: "Current Ratio (Rasio Lancar)",
-                description: "Ukur kemampuan perusahaan membayar utang jangka pendek dengan aset lancar.",
-                inputs: [ { id: "curr-aset-lancar", label: "Total Aset Lancar", type: "number" }, { id: "curr-utang-lancar", label: "Total Kewajiban Lancar", type: "number" } ],
-                calculation: (v) => (v['curr-utang-lancar'] === 0) ? { error: "Kewajiban lancar tidak boleh nol." } : `${(v['curr-aset-lancar'] / v['curr-utang-lancar']).toFixed(2)}`,
-                resultLabel: "Current Ratio"
-            },
-            "DER": {
-                title: "Debt to Equity Ratio (DER)",
-                description: "Bandingkan total utang perusahaan dengan modal sendiri.",
-                inputs: [ { id: "der-utang", label: "Total Utang", type: "number" }, { id: "der-modal", label: "Total Modal (Ekuitas)", type: "number" } ],
-                calculation: (v) => (v['der-modal'] === 0) ? { error: "Modal tidak boleh nol." } : `${(v['der-utang'] / v['der-modal']).toFixed(2)}`,
-                resultLabel: "Debt to Equity Ratio"
-            },
-            "InventoryTurnover": {
-                title: "Inventory Turnover",
-                description: "Ukur seberapa sering persediaan terjual dalam satu periode.",
-                inputs: [ { id: "it-hpp", label: "Harga Pokok Penjualan (HPP)", type: "number" }, { id: "it-persediaan", label: "Rata-rata Persediaan", type: "number" } ],
-                calculation: (v) => (v['it-persediaan'] === 0) ? { error: "Persediaan tidak boleh nol." } : `${(v['it-hpp'] / v['it-persediaan']).toFixed(2)} kali`,
-                resultLabel: "Inventory Turnover Ratio"
-            },
-            "WorkingCapital": {
-                title: "Working Capital (Modal Kerja)",
-                description: "Hitung selisih antara aset lancar dengan kewajiban lancar.",
-                inputs: [ { id: "wc-aset-lancar", label: "Total Aset Lancar", type: "number" }, { id: "wc-utang-lancar", label: "Total Kewajiban Lancar", type: "number" } ],
-                calculation: (v) => v['wc-aset-lancar'] - v['wc-utang-lancar'],
-                resultLabel: "Modal Kerja Bersih"
-            }
-        },
-        "Penganggaran & Perencanaan": {
-            "VarianceAnalysis": {
-                title: "Analisis Varians",
-                description: "Bandingkan hasil aktual dengan angka yang dianggarkan.",
-                inputs: [ { id: "va-aktual", label: "Hasil Aktual (Realisasi)", type: "number" }, { id: "va-anggaran", label: "Angka Anggaran", type: "number" } ],
-                calculation: (v) => {
-                    const variance = v['va-aktual'] - v['va-anggaran'];
-                    const status = variance >= 0 ? '<span class="text-green-600">(Favorable)</span>' : '<span class="text-red-600">(Unfavorable)</span>';
-                    return `${formatCurrency(variance)} ${status}`;
-                },
-                resultLabel: "Hasil Analisis Varians"
-            },
-            "CapEx": {
-                title: "Capital Expenditure (CapEx)",
-                description: "Total biaya untuk memperoleh atau meningkatkan aset tetap.",
-                inputs: [ { id: "capex-total", label: "Total Pengeluaran Modal", type: "number" } ],
-                calculation: (v) => v['capex-total'],
-                resultLabel: "Total CapEx"
-            },
-            "OpEx": {
-                title: "Operational Expenditure (OpEx)",
-                description: "Total biaya operasional rutin untuk menjalankan bisnis.",
-                inputs: [ { id: "opex-total", label: "Total Pengeluaran Operasional", type: "number" } ],
-                calculation: (v) => v['opex-total'],
-                resultLabel: "Total OpEx"
-            },
-        },
-        "Pajak & Regulasi": {
-            "PPh": {
-                title: "Pajak Penghasilan (PPh)",
-                description: "Hitung estimasi PPh berdasarkan tarif yang berlaku.",
-                 inputs: [ { id: "pph-pkp", label: "Penghasilan Kena Pajak (PKP)", type: "number" }, { id: "pph-tarif", label: "Tarif Pajak (%)", type: "number" } ],
-                calculation: (v) => v['pph-pkp'] * (v['pph-tarif'] / 100),
-                resultLabel: "Jumlah PPh Terutang"
-            },
-            "PPN": {
-                title: "Pajak Pertambahan Nilai (PPN)",
-                description: "Hitung PPN yang dikenakan atas transaksi barang atau jasa.",
-                inputs: [ { id: "ppn-dpp", label: "Dasar Pengenaan Pajak (DPP)", type: "number" }, { id: "ppn-tarif", label: "Tarif PPN (%)", type: "number", value: 11 } ],
-                calculation: (v) => (v['ppn-dpp'] * v['ppn-tarif']) / 100,
-                resultLabel: "Jumlah PPN"
-            },
-            "PBB": {
-                title: "Pajak Bumi & Bangunan (PBB)",
-                description: "Hitung PBB berdasarkan Nilai Jual Objek Pajak (NJOP).",
-                inputs: [ { id: "pbb-njop", label: "NJOP", type: "number" }, { id: "pbb-tarif", label: "Tarif PBB Efektif (%)", type: "number", value: 0.1 } ],
-                calculation: (v) => v['pbb-njop'] * (v['pbb-tarif'] / 100),
-                resultLabel: "Jumlah PBB Terutang"
-            }
-        }
-    };
+            // === STATE APLIKASI ===
+            let keranjang = []; 
+            let riwayatPenjualan = [];
+            let filterKategori = 'semua';
+            let searchTerm = '';
 
-    // --- Fungsi Utilitas & Manajemen State ---
-    const formatCurrency = (value) => (typeof value !== 'number') ? value : `Rp ${value.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
-    const saveHistory = () => localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-    const loadHistory = () => history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    
-    // --- Fungsi UI ---
-    const openMenu = () => {
-        sidebar.classList.remove('-translate-x-full');
-        menuOverlay.classList.remove('hidden');
-        mainContent.classList.add('lg:ml-72');
-    };
+            // === ELEMEN DOM (KASIR) ===
+            const productGrid = document.getElementById('product-grid');
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            const cartEmptyMessage = document.getElementById('cart-empty-message');
+            const subtotalEl = document.getElementById('subtotal');
+            const pajakEl = document.getElementById('pajak');
+            const totalEl = document.getElementById('total');
+            const jumlahBayarInput = document.getElementById('jumlah-bayar');
+            const kembalianEl = document.getElementById('kembalian');
+            const btnBayar = document.getElementById('btn-bayar');
+            const btnBaru = document.getElementById('btn-baru');
+            const kategoriFilter = document.getElementById('kategori-filter');
+            const searchInput = document.getElementById('search-input');
+            const successModal = document.getElementById('success-modal');
+            const btnTutupModal = document.getElementById('btn-tutup-modal');
+            const modalTotal = document.getElementById('modal-total');
+            const modalKembalian = document.getElementById('modal-kembalian');
+            const notifikasiEl = document.getElementById('notifikasi');
 
-    const closeMenu = () => {
-        sidebar.classList.add('-translate-x-full');
-        menuOverlay.classList.add('hidden');
-        mainContent.classList.remove('lg:ml-72');
-    };
-    
-    // Fungsi changeTheme dan loadDashboardImage (dihapus/dinonaktifkan)
-    
-    const initializeUI = () => {
-        // Buat Navigasi Sidebar
-        const dashboardLink = document.createElement('a');
-        dashboardLink.href = '#';
-        dashboardLink.className = 'nav-item flex items-center gap-3 w-full text-left p-2 rounded-lg hover:bg-gray-700 transition-colors mb-2';
-        dashboardLink.dataset.calculator = 'dashboard';
-        dashboardLink.innerHTML = `<svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h7.5" /></svg>Dashboard`;
-        sidebarNav.appendChild(dashboardLink);
+            // === ELEMEN DOM (NAVIGASI & HALAMAN) ===
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const pages = document.querySelectorAll('.page-content');
+            const navKasir = document.getElementById('nav-kasir');
+            const navProduk = document.getElementById('nav-produk');
+            const navRiwayat = document.getElementById('nav-riwayat');
+            const halamanKasir = document.getElementById('halaman-kasir');
+            const halamanProduk = document.getElementById('halaman-produk');
+            const halamanRiwayat = document.getElementById('halaman-riwayat');
 
-        Object.entries(categories).forEach(([categoryName, calculators]) => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = "py-1";
-            const header = document.createElement('button');
-            header.className = 'accordion-header w-full flex justify-between items-center p-2 rounded-lg hover:bg-gray-700 transition-colors';
-            header.innerHTML = `
-                <span class="font-semibold text-sm text-left">${categoryName}</span>
-                <svg class="chevron h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-            `;
-            const content = document.createElement('div');
-            content.className = 'accordion-content pl-4 pt-1';
-            Object.keys(calculators).forEach(calcKey => {
-                const navItem = document.createElement('a');
-                navItem.href = '#';
-                navItem.className = 'nav-item block w-full text-left p-2 text-sm rounded-lg hover:bg-gray-700 transition-colors';
-                navItem.textContent = calculators[calcKey].title;
-                navItem.dataset.calculator = calcKey;
-                content.appendChild(navItem);
-            });
-            categoryDiv.appendChild(header);
-            categoryDiv.appendChild(content);
-            sidebarNav.appendChild(categoryDiv);
-        });
+            // === ELEMEN DOM (HALAMAN PRODUK) ===
+            const formTambahProduk = document.getElementById('form-tambah-produk');
+            const daftarProdukAdminContainer = document.getElementById('daftar-produk-admin');
 
-        // Buat Kartu Kalkulator
-        Object.values(categories).flatMap(Object.entries).forEach(([calcKey, details]) => {
-            const card = document.createElement('div');
-            card.id = `calc-${calcKey}`;
-            card.className = 'calculator-card';
-            let inputsHTML = details.inputs.map(input => `
-                <div class="mb-4">
-                    <label for="${input.id}" class="block text-sm font-medium text-gray-700 mb-1">${input.label}</label>
-                    <input type="${input.type}" id="${input.id}" name="${input.id}" ${input.value ? `value="${input.value}"` : ''} step="any" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm p-2 bg-gray-50" placeholder="0">
-                </div>
-            `).join('');
+            // === ELEMEN DOM (HALAMAN RIWAYAT) ===
+            const riwayatContainer = document.getElementById('riwayat-container');
+            const riwayatEmptyMessage = document.getElementById('riwayat-empty-message');
 
-            card.innerHTML = `
-                <div class="bg-white p-6 rounded-xl shadow-md fade-in">
-                    <h2 class="text-2xl font-bold text-gray-900">${details.title}</h2>
-                    <p class="mt-2 text-gray-600">${details.description}</p>
-                    <form id="form-${calcKey}" class="mt-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">${inputsHTML}</div>
-                        <div class="flex gap-4 mt-6">
-                            <button type="submit" class="flex-1 rounded-md bg-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-500">Hitung</button>
-                            <button type="reset" class="flex-1 rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-300">Reset</button>
-                        </div>
-                    </form>
-                    <div id="result-${calcKey}" class="mt-6 p-4 bg-teal-50 rounded-lg border border-teal-200 hidden">
-                        <h3 class="text-md font-semibold text-teal-800">${details.resultLabel}</h3>
-                        <p class="text-2xl font-bold text-teal-900 mt-1"></p>
-                    </div>
-                    <button id="save-history-${calcKey}" class="mt-4 w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 hidden">Simpan ke Riwayat</button>
-                </div>`;
-            calculatorContent.appendChild(card);
-        });
-        
-        // Buat Halaman Riwayat
-        const historyCard = document.createElement('div');
-        historyCard.id = 'calc-history';
-        historyCard.className = 'calculator-card';
-        historyCard.innerHTML = `
-             <div class="bg-white p-6 rounded-xl shadow-md fade-in">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold text-gray-900">Riwayat Perhitungan</h2>
-                    <button id="clear-history-btn" class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">Bersihkan Riwayat</button>
-                </div>
-                <div id="history-list" class="mt-6 space-y-4"></div>
-            </div>`;
-        calculatorContent.appendChild(historyCard);
-    };
 
-    const addEventListeners = () => {
-        // Menu
-        openMenuBtn.addEventListener('click', openMenu);
-        closeMenuBtn.addEventListener('click', closeMenu);
-        menuOverlay.addEventListener('click', closeMenu);
-        
-        // Tombol Bersihkan Riwayat (di Homepage)
-        document.getElementById('clear-history-homepage-btn').addEventListener('click', () => {
-           // Ganti alert dengan confirm
-           if(confirm('Anda yakin ingin menghapus semua riwayat? Tindakan ini tidak dapat dibatalkan.')) {
-               history = [];
-               saveHistory();
-               alert('Riwayat berhasil dibersihkan!');
-           }
-        });
+            // === FUNGSI ===
 
-        // Navigasi & Accordion
-        sidebar.addEventListener('click', (e) => {
-            const accordionHeader = e.target.closest('.accordion-header');
-            const navItem = e.target.closest('.nav-item');
+            // Tampilkan Notifikasi Kustom
+            let notifikasiTimeout;
+            const showNotifikasi = (pesan, tipe = 'error') => {
+                clearTimeout(notifikasiTimeout); // Hapus timeout sebelumnya jika ada
+                notifikasiEl.textContent = pesan;
+                notifikasiEl.classList.remove('hidden', 'bg-red-600', 'bg-green-600');
+                
+                if (tipe === 'error') {
+                    notifikasiEl.classList.add('bg-red-600');
+                } else if (tipe === 'sukses') {
+                    notifikasiEl.classList.add('bg-green-600');
+                }
 
-            if (accordionHeader) {
-                accordionHeader.classList.toggle('active');
-            }
+                notifikasiTimeout = setTimeout(() => {
+                    notifikasiEl.classList.add('hidden');
+                }, 3000);
+            };
+
+            // Format Angka ke Rupiah
+            const formatRupiah = (angka) => {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(angka);
+            };
             
-            if (navItem) {
-                e.preventDefault();
-                const calculatorId = navItem.dataset.calculator;
+            // Pindah Halaman
+            const pindahHalaman = (targetPageId) => {
+                // Sembunyikan semua halaman
+                pages.forEach(page => page.classList.add('hidden'));
                 
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('bg-teal-700', 'font-semibold'));
-                document.querySelectorAll('.calculator-card').forEach(card => card.classList.remove('active'));
-                
-                // Tambahkan styling aktif hanya jika bukan card ringkasan di welcome-screen
-                if (!navItem.closest('#welcome-screen')) {
-                    navItem.classList.add('bg-teal-700', 'font-semibold');
+                // Tampilkan halaman target
+                const targetPage = document.getElementById(targetPageId);
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
                 }
                 
-                const targetCard = document.getElementById(`calc-${calculatorId}`);
-
-                if (calculatorId === 'dashboard') {
-                    document.getElementById('welcome-screen').classList.add('active');
-                    headerTitle.textContent = "Dashboard";
-                } else if (targetCard) {
-                    targetCard.classList.add('active');
-                    // Tentukan judul header
-                    let title = navItem.textContent.trim();
-                    if (title.endsWith('→')) { // Jika diklik dari summary card
-                        const calcDetails = categories[Object.keys(categories).find(cat => Object.keys(categories[cat]).includes(calculatorId))][calculatorId];
-                        title = calcDetails.title;
-                    } else if (calculatorId !== 'history') { // Jika diklik dari sidebar
-                        const calcDetails = categories[Object.keys(categories).find(cat => Object.keys(categories[cat]).includes(calculatorId))][calculatorId];
-                        title = calcDetails.title;
-                    }
-                    headerTitle.textContent = title;
-                } else if (calculatorId === 'history') {
-                    document.getElementById('calc-history').classList.add('active');
-                    headerTitle.textContent = "Riwayat Perhitungan";
-                    renderHistory();
-                }
-
-                if (window.innerWidth < 1024) closeMenu();
-            }
-        });
-        
-        // Form Kalkulator
-        Object.values(categories).flatMap(Object.entries).forEach(([calcKey, details]) => {
-            const form = document.getElementById(`form-${calcKey}`);
-            const resultDiv = document.getElementById(`result-${calcKey}`);
-            const saveBtn = document.getElementById(`save-history-${calcKey}`);
-
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const values = {};
-                let isValid = true;
-                details.inputs.forEach(input => {
-                    const el = document.getElementById(input.id);
-                    const val = parseFloat(el.value);
-                    if(el.value === '' || isNaN(val)) {
-                        el.classList.add('border-red-500', 'ring-1', 'ring-red-500'); isValid = false;
+                // Update style tombol navigasi
+                navButtons.forEach(btn => {
+                    if (btn.dataset.page === targetPageId) {
+                        btn.classList.add('bg-cyan-600', 'text-white');
+                        btn.classList.remove('text-slate-400', 'hover:bg-slate-700');
                     } else {
-                        el.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                        btn.classList.remove('bg-cyan-600', 'text-white');
+                        btn.classList.add('text-slate-400', 'hover:bg-slate-700');
                     }
-                    values[input.id] = val;
                 });
                 
-                if (!isValid) {
-                    resultDiv.querySelector('p').innerHTML = `<span class="text-red-600">Harap isi semua input dengan angka valid.</span>`;
-                    resultDiv.classList.remove('hidden');
-                    saveBtn.classList.add('hidden');
+                // Render konten halaman jika perlu
+                if (targetPageId === 'halaman-produk') {
+                    renderDaftarProdukAdmin();
+                } else if (targetPageId === 'halaman-riwayat') {
+                    renderRiwayat();
+                }
+            };
+
+            // Render Produk di Grid (Halaman Kasir)
+            const renderProduk = () => {
+                productGrid.innerHTML = ''; // Kosongkan grid
+
+                const filteredProducts = allProducts.filter(produk => {
+                    const matchKategori = (filterKategori === 'semua' || produk.kategori === filterKategori);
+                    const matchSearch = (produk.nama.toLowerCase().includes(searchTerm.toLowerCase()));
+                    return matchKategori && matchSearch;
+                });
+
+                if (filteredProducts.length === 0) {
+                    productGrid.innerHTML = `<p class="col-span-full text-slate-400 text-center">Produk tidak ditemukan.</p>`;
                     return;
                 }
 
-                const result = details.calculation(values);
-                resultDiv.classList.remove('hidden');
+                filteredProducts.forEach(produk => {
+                    const productCard = document.createElement('div');
+                    productCard.className = `bg-slate-800 rounded-lg shadow-lg overflow-hidden relative ${produk.stok > 0 ? 'cursor-pointer transform transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]' : 'opacity-50 cursor-not-allowed'}`;
+                    
+                    productCard.innerHTML = `
+                        <img src="${produk.gambar}" alt="${produk.nama}" class="w-full h-32 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-white text-sm truncate">${produk.nama}</h3>
+                            <p class="text-cyan-400 text-sm font-bold mt-1">${formatRupiah(produk.harga)}</p>
+                            <p class="text-xs text-slate-400 mt-1">Stok: ${produk.stok}</p>
+                        </div>
+                        ${produk.stok <= 0 ? `
+                            <div class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+                                <span class="text-white font-bold text-lg border-2 border-white px-4 py-2 rounded-md">Stok Habis</span>
+                            </div>
+                        ` : ''}
+                    `;
+                    
+                    // Tambah event listener untuk menambah ke keranjang (hanya jika stok > 0)
+                    if (produk.stok > 0) {
+                        productCard.addEventListener('click', () => tambahKeKeranjang(produk.id));
+                    }
+                    
+                    productGrid.appendChild(productCard);
+                });
+            };
 
-                if (typeof result === 'object' && result.error) {
-                     resultDiv.querySelector('p').innerHTML = `<span class="text-red-600">${result.error}</span>`;
-                     saveBtn.classList.add('hidden');
-                } else {
-                    const finalResult = typeof result === 'number' ? formatCurrency(result) : result;
-                    resultDiv.querySelector('p').innerHTML = finalResult;
-                    saveBtn.dataset.result = finalResult.replace(/<br>|<[^>]+>/g, ' | ');
-                    saveBtn.classList.remove('hidden');
+            // Tambah Produk ke Keranjang (dengan cek stok)
+            const tambahKeKeranjang = (id) => {
+                const produk = allProducts.find(p => p.id === id);
+                if (produk.stok <= 0) {
+                    showNotifikasi("Stok produk ini sudah habis.");
+                    return;
                 }
                 
-                const inputData = {};
-                details.inputs.forEach(input => {
-                    inputData[input.label] = formatCurrency(parseFloat(document.getElementById(input.id).value));
+                const itemDiKeranjang = keranjang.find(item => item.id === id);
+                const jumlahDiKeranjang = itemDiKeranjang ? itemDiKeranjang.jumlah : 0;
+                
+                if (jumlahDiKeranjang >= produk.stok) {
+                    showNotifikasi("Stok di keranjang sudah maksimal (total stok: " + produk.stok + ").");
+                    return;
+                }
+
+                if (itemDiKeranjang) {
+                    itemDiKeranjang.jumlah++;
+                } else {
+                    keranjang.push({ ...produk, jumlah: 1 });
+                }
+                
+                renderKeranjang();
+            };
+
+            // Ubah Jumlah Item di Keranjang (dengan cek stok)
+            const ubahJumlahItem = (id, delta) => {
+                const itemDiKeranjang = keranjang.find(item => item.id === id);
+                if (!itemDiKeranjang) return;
+
+                const produk = allProducts.find(p => p.id === id);
+                const jumlahBaru = itemDiKeranjang.jumlah + delta;
+
+                // Cek stok saat menambah
+                if (delta > 0 && jumlahBaru > produk.stok) {
+                    showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
+                    return;
+                }
+
+                itemDiKeranjang.jumlah = jumlahBaru;
+
+                if (itemDiKeranjang.jumlah <= 0) {
+                    keranjang = keranjang.filter(item => item.id !== id);
+                }
+                
+                renderKeranjang();
+            };
+
+            // Render Ulang Tampilan Keranjang
+            const renderKeranjang = () => {
+                cartItemsContainer.innerHTML = '';
+
+                if (keranjang.length === 0) {
+                    cartEmptyMessage.classList.remove('hidden');
+                } else {
+                    cartEmptyMessage.classList.add('hidden');
+                    keranjang.forEach(item => {
+                        const cartItem = document.createElement('div');
+                        cartItem.className = 'flex justify-between items-center mb-4 pb-4 border-b border-slate-700';
+                        cartItem.innerHTML = `
+                            <div class="flex items-center w-2/5">
+                                <img src="${item.gambar}" alt="${item.nama}" class="w-12 h-12 rounded-lg mr-3 object-cover flex-shrink-0">
+                                <div class="overflow-hidden">
+                                    <h4 class="text-sm font-semibold text-white truncate">${item.nama}</h4>
+                                    <p class="text-xs text-slate-400">${formatRupiah(item.harga)}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <button class="btn-kurang w-7 h-7 bg-slate-700 rounded-full font-bold text-lg text-cyan-400 hover:bg-slate-600">-</button>
+                                <span class="mx-2 text-sm font-medium w-6 text-center">${item.jumlah}</span>
+                                <button class="btn-tambah w-7 h-7 bg-slate-700 rounded-full font-bold text-lg text-cyan-400 hover:bg-slate-600">+</button>
+                            </div>
+                            <p class="text-sm font-semibold text-white w-1/4 text-right">${formatRupiah(item.harga * item.jumlah)}</p>
+                        `;
+
+                        cartItem.querySelector('.btn-kurang').addEventListener('click', () => ubahJumlahItem(item.id, -1));
+                        cartItem.querySelector('.btn-tambah').addEventListener('click', () => ubahJumlahItem(item.id, 1));
+
+                        cartItemsContainer.appendChild(cartItem);
+                    });
+                }
+                updateTotal();
+            };
+
+            // Update Total (Subtotal, Pajak, Total)
+            const updateTotal = () => {
+                const subtotal = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0);
+                const pajak = subtotal * 0.10; // Pajak 10%
+                const total = subtotal + pajak;
+
+                subtotalEl.textContent = formatRupiah(subtotal);
+                pajakEl.textContent = formatRupiah(pajak);
+                totalEl.textContent = formatRupiah(total);
+                
+                btnBayar.disabled = (keranjang.length === 0);
+                hitungKembalian();
+            };
+
+            // Format Input 'Jumlah Bayar'
+            const formatInputBayar = (e) => {
+                let value = e.target.value.replace(/[^0-9]/g, '');
+                e.target.value = value;
+                hitungKembalian();
+            };
+            
+            // Hitung Kembalian
+            const hitungKembalian = () => {
+                const total = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0) * 1.10;
+                let jumlahBayar = parseFloat(jumlahBayarInput.value.replace(/[^0-9]/g, ''));
+                
+                if (isNaN(jumlahBayar) || jumlahBayar < total) {
+                    kembalianEl.textContent = "Rp 0";
+                    kembalianEl.classList.remove('text-cyan-400');
+                    kembalianEl.classList.add('text-red-500');
+                    btnBayar.disabled = true;
+                } else {
+                    const kembalian = jumlahBayar - total;
+                    kembalianEl.textContent = formatRupiah(kembalian);
+                    kembalianEl.classList.add('text-cyan-400');
+                    kembalianEl.classList.remove('text-red-500');
+                    btnBayar.disabled = false;
+                }
+                
+                if (keranjang.length === 0) {
+                     btnBayar.disabled = true;
+                }
+            };
+            
+            // Proses Pembayaran (Update Stok & Riwayat)
+            const prosesBayar = () => {
+                const subtotal = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0);
+                const pajak = subtotal * 0.10;
+                const total = subtotal + pajak;
+                let jumlahBayar = parseFloat(jumlahBayarInput.value.replace(/[^0-9]/g, ''));
+                const kembalian = jumlahBayar - total;
+
+                // 1. Kurangi Stok
+                keranjang.forEach(itemKeranjang => {
+                    const produkDiDb = allProducts.find(p => p.id === itemKeranjang.id);
+                    if (produkDiDb) {
+                        produkDiDb.stok -= itemKeranjang.jumlah;
+                    }
                 });
-                saveBtn.dataset.inputs = JSON.stringify(inputData);
+                
+                // 2. Tambah ke Riwayat Penjualan
+                const transaksi = {
+                    id: `TRX-${new Date().getTime()}`,
+                    tanggal: new Date(),
+                    items: JSON.parse(JSON.stringify(keranjang)), // Deep copy keranjang
+                    subtotal: subtotal,
+                    pajak: pajak,
+                    total: total,
+                    bayar: jumlahBayar,
+                    kembalian: kembalian
+                };
+                riwayatPenjualan.push(transaksi);
+
+                // 3. Tampilkan modal sukses
+                modalTotal.textContent = formatRupiah(total);
+                modalKembalian.textContent = formatRupiah(kembalian);
+                successModal.classList.remove('hidden');
+                successModal.querySelector('div').classList.add('scale-100');
+            };
+            
+            // Transaksi Baru (Reset)
+            const mulaiBaru = () => {
+                keranjang = [];
+                jumlahBayarInput.value = '';
+                renderKeranjang();
+                kembalianEl.textContent = "Rp 0";
+                kembalianEl.classList.add('text-cyan-400');
+                kembalianEl.classList.remove('text-red-500');
+            };
+            
+            // Tutup Modal
+            const tutupModal = () => {
+                successModal.classList.add('hidden');
+                successModal.querySelector('div').classList.remove('scale-100');
+                mulaiBaru();
+                renderProduk(); // Render ulang grid produk untuk update stok
+            };
+
+            // Render Daftar Produk (Halaman Admin)
+            const renderDaftarProdukAdmin = () => {
+                daftarProdukAdminContainer.innerHTML = '';
+                if (allProducts.length === 0) {
+                    daftarProdukAdminContainer.innerHTML = `<p class="text-slate-500 text-center">Belum ada produk.</p>`;
+                    return;
+                }
+                
+                allProducts.slice().reverse().forEach(produk => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between bg-slate-700 p-3 rounded-lg';
+                    item.innerHTML = `
+                        <div class="flex items-center">
+                            <img src="${produk.gambar}" alt="${produk.nama}" class="w-10 h-10 rounded-lg mr-3 object-cover">
+                            <div>
+                                <h4 class="text-sm font-semibold text-white">${produk.nama}</h4>
+                                <p class="text-xs text-slate-400">${formatRupiah(produk.harga)} - Stok: ${produk.stok}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xs font-medium bg-slate-600 px-2 py-1 rounded-full">${produk.kategori}</span>
+                            <button class="btn-hapus-produk text-red-500 hover:text-red-400" data-id="${produk.id}" title="Hapus Produk">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </div>
+                    `;
+                    daftarProdukAdminContainer.appendChild(item);
+                });
+            };
+            
+            // Handle Submit Form Tambah Produk
+            const handleTambahProduk = (e) => {
+                e.preventDefault();
+                
+                const nama = document.getElementById('prod-nama').value;
+                const kategori = document.getElementById('prod-kategori').value;
+                const harga = parseFloat(document.getElementById('prod-harga').value);
+                const stok = parseInt(document.getElementById('prod-stok').value);
+                
+                // --- LOGIKA GAMBAR BARU ---
+                const fileInput = document.getElementById('prod-gambar-file');
+                let gambar = ''; // Ini akan menjadi Object URL
+                
+                if (fileInput.files && fileInput.files[0]) {
+                    // Buat URL sementara untuk gambar yang diunggah
+                    gambar = URL.createObjectURL(fileInput.files[0]);
+                } else {
+                    // Fallback ke placeholder jika tidak ada gambar yang diunggah
+                    gambar = `https://placehold.co/150x150/1e293b/94a3b8?text=${nama.replace(/\s+/g, '+')}`;
+                }
+                // --- AKHIR LOGIKA BARU ---
+                
+                const newId = allProducts.length > 0 ? Math.max(...allProducts.map(p => p.id)) + 1 : 1;
+                
+                const newProduct = { id: newId, nama, kategori, harga, stok, gambar };
+                
+                allProducts.push(newProduct);
+                
+                renderProduk(); // Update grid di halaman kasir
+                renderDaftarProdukAdmin(); // Update list di halaman admin
+                
+                showNotifikasi("Produk berhasil ditambahkan!", "sukses");
+                formTambahProduk.reset();
+            };
+            
+            // Handle Hapus Produk
+            const hapusProduk = (id) => {
+                // Konfirmasi sederhana (karena window.confirm() tidak diizinkan, kita langsung hapus)
+                // Di aplikasi nyata, Anda akan menggunakan modal kustom di sini.
+                
+                const idToRemove = parseInt(id);
+                
+                // 1. Hapus dari database utama
+                allProducts = allProducts.filter(p => p.id !== idToRemove);
+                
+                // 2. Hapus dari keranjang saat ini (jika ada)
+                const itemDiKeranjang = keranjang.find(item => item.id === idToRemove);
+                if (itemDiKeranjang) {
+                    keranjang = keranjang.filter(item => item.id !== idToRemove);
+                }
+                
+                // 3. Render ulang semua yang terdampak
+                renderDaftarProdukAdmin(); // Update list di halaman admin
+                renderProduk(); // Update grid di halaman kasir
+                
+                // 4. Render ulang keranjang jika itemnya ada di sana
+                if (itemDiKeranjang) {
+                    renderKeranjang(); // Ini akan memanggil updateTotal juga
+                }
+                
+                // 5. Tampilkan notifikasi
+                showNotifikasi("Produk berhasil dihapus.", "sukses");
+            };
+            
+            // Render Riwayat Penjualan
+            const renderRiwayat = () => {
+                riwayatContainer.innerHTML = ''; // Kosongkan
+                if (riwayatPenjualan.length === 0) {
+                    riwayatContainer.appendChild(riwayatEmptyMessage);
+                    return;
+                }
+
+                riwayatPenjualan.slice().reverse().forEach(trx => {
+                    const trxCard = document.createElement('div');
+                    trxCard.className = 'bg-slate-800 p-5 rounded-lg shadow-lg';
+                    
+                    const itemsHtml = trx.items.map(item => `
+                        <li class="flex justify-between text-sm text-slate-300">
+                            <span>${item.nama} <span class="text-slate-400">x ${item.jumlah}</span></span>
+                            <span>${formatRupiah(item.harga * item.jumlah)}</span>
+                        </li>
+                    `).join('');
+                    
+                    trxCard.innerHTML = `
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-lg font-semibold text-cyan-400">${trx.id}</h3>
+                            <span class="text-sm text-slate-400">${trx.tanggal.toLocaleString('id-ID')}</span>
+                        </div>
+                        <ul class="space-y-1 border-b border-slate-700 pb-2 mb-2">
+                            ${itemsHtml}
+                        </ul>
+                        <div class="space-y-1 text-sm">
+                            <div class="flex justify-between text-slate-300"><span>Subtotal:</span> <span>${formatRupiah(trx.subtotal)}</span></div>
+                            <div class="flex justify-between text-slate-300"><span>Pajak (10%):</span> <span>${formatRupiah(trx.pajak)}</span></div>
+                            <div class="flex justify-between text-white font-semibold"><span>Total:</span> <span>${formatRupiah(trx.total)}</span></div>
+                            <div class="flex justify-between text-slate-300 pt-1 border-t border-slate-700 mt-1"><span>Bayar:</span> <span>${formatRupiah(trx.bayar)}</span></div>
+                            <div class="flex justify-between text-cyan-300"><span>Kembalian:</span> <span>${formatRupiah(trx.kembalian)}</span></div>
+                        </div>
+                    `;
+                    riwayatContainer.appendChild(trxCard);
+                });
+            };
+
+            // === EVENT LISTENERS ===
+
+            // Navigasi Halaman
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => pindahHalaman(btn.dataset.page));
             });
 
-            form.addEventListener('reset', () => {
-                resultDiv.classList.add('hidden');
-                saveBtn.classList.add('hidden');
-                details.inputs.forEach(input => document.getElementById(input.id).classList.remove('border-red-500', 'ring-1', 'ring-red-500'));
+            // Filter Kategori (Halaman Kasir)
+            kategoriFilter.addEventListener('click', (e) => {
+                if (e.target.classList.contains('kategori-btn')) {
+                    document.querySelectorAll('.kategori-btn').forEach(btn => {
+                        btn.classList.remove('bg-cyan-600', 'text-white');
+                        btn.classList.add('bg-slate-700', 'text-slate-300');
+                    });
+                    e.target.classList.add('bg-cyan-600', 'text-white');
+                    e.target.classList.remove('bg-slate-700', 'text-slate-300');
+
+                    filterKategori = e.target.dataset.kategori;
+                    renderProduk();
+                }
+            });
+
+            // Pencarian Produk (Halaman Kasir)
+            searchInput.addEventListener('input', (e) => {
+                searchTerm = e.target.value;
+                renderProduk();
             });
             
-            saveBtn.addEventListener('click', function() {
-                history.unshift({
-                    name: details.title,
-                    result: this.dataset.result,
-                    inputs: JSON.parse(this.dataset.inputs),
-                    timestamp: new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })
-                });
-                saveHistory();
-                this.textContent = 'Berhasil Disimpan!'; this.disabled = true;
-                setTimeout(() => { this.textContent = 'Simpan ke Riwayat'; this.disabled = false; }, 2000);
+            // Input Pembayaran (Halaman Kasir)
+            jumlahBayarInput.addEventListener('input', formatInputBayar);
+
+            // Tombol Aksi (Halaman Kasir)
+            btnBayar.addEventListener('click', prosesBayar);
+            btnBaru.addEventListener('click', mulaiBaru);
+            
+            // Modal
+            btnTutupModal.addEventListener('click', tutupModal);
+            successModal.addEventListener('click', (e) => {
+                if (e.target === successModal) {
+                    tutupModal();
+                }
             });
+            
+            // Form Tambah Produk (Halaman Produk)
+            formTambahProduk.addEventListener('submit', handleTambahProduk);
+
+            // Tombol Hapus Produk (Halaman Produk - Event Delegation)
+            daftarProdukAdminContainer.addEventListener('click', (e) => {
+                const target = e.target.closest('.btn-hapus-produk');
+                if (target) {
+                    // Dapatkan id dari data-id
+                    const id = target.dataset.id;
+                    hapusProduk(id);
+                }
+            });
+
+
+            // === INISIALISASI ===
+            renderProduk();
+            renderKeranjang();
         });
-        
-        document.getElementById('clear-history-btn').addEventListener('click', () => {
-           if(confirm('Anda yakin ingin menghapus semua riwayat? Tindakan ini tidak dapat dibatalkan.')) {
-               history = [];
-               saveHistory();
-               renderHistory();
-           }
-        });
-    };
+    </script>
 
-    const renderHistory = () => {
-        const historyList = document.getElementById('history-list');
-        historyList.innerHTML = history.length === 0 
-            ? '<p class="text-gray-500 text-center py-4">Belum ada riwayat perhitungan.</p>'
-            : history.map(item => `
-                <div class="p-4 border rounded-lg bg-gray-50/80 hover:bg-white transition-all">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-semibold text-gray-800">${item.name}</p>
-                            <p class="text-lg font-bold text-teal-700 mt-1">${item.result}</p>
-                            <details class="text-sm text-gray-600 mt-2">
-                                <summary class="cursor-pointer select-none">Detail Input</summary>
-                                <ul class="list-disc pl-5 mt-1">${Object.entries(item.inputs).map(([k, v]) => `<li>${k}: ${v}</li>`).join('')}</ul>
-                            </details>
-                        </div>
-                        <p class="text-xs text-gray-400 flex-shrink-0 ml-4 text-right">${item.timestamp}</p>
-                    </div>
-                </div>
-            `).join('');
-    };
-
-    // Inisialisasi Aplikasi
-    enterAppBtn.addEventListener('click', () => {
-        landingScreen.classList.add('opacity-0');
-        setTimeout(() => {
-            landingScreen.style.display = 'none';
-            mainApp.classList.remove('hidden');
-            mainApp.classList.add('fade-in');
-            if (window.innerWidth >= 1024) openMenu();
-        }, 500);
-    });
-
-    loadHistory();
-    initializeUI();
-    addEventListeners();
-});
-</script>
 </body>
 </html>
