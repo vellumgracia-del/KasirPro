@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* (Style CSS tidak berubah, sama seperti sebelumnya) */
+        /* (Style CSS) */
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
@@ -345,21 +345,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // === DATABASE PRODUK ===
+            // === DATA PRODUK ===
             let allProducts = [
-                { id: 1, nama: "Nasi Goreng Spesial", kategori: "makanan", harga: 25000, stok: 50, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Nasi+Goreng" },
-                { id: 2, nama: "Ayam Bakar Madu", kategori: "makanan", harga: 35000, stok: 30, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Ayam+Bakar" },
-                { id: 3, nama: "Soto Ayam Lamongan", kategori: "makanan", harga: 20000, stok: 40, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Soto+Ayam" },
-                { id: 4, nama: "Es Teh Manis", kategori: "minuman", harga: 5000, stok: 100, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Es+Teh" },
-                { id: 5, nama: "Jus Alpukat", kategori: "minuman", harga: 15000, stok: 20, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Jus+Alpukat" },
-                { id: 6, nama: "Kopi Hitam", kategori: "minuman", harga: 8000, stok: 80, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Kopi+Hitam" },
-                { id: 7, nama: "Kentang Goreng", kategori: "snack", harga: 12000, stok: 60, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Kentang" },
-                { id: 8, nama: "Roti Bakar Coklat", kategori: "snack", harga: 18000, stok: 25, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Roti+Bakar" },
-                { id: 9, nama: "Pisang Goreng Keju", kategori: "snack", harga: 15000, stok: 30, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Pisang+Goreng" },
-                { id: 10, nama: "Air Mineral", kategori: "minuman", harga: 4000, stok: 200, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Air+Mineral" },
-                { id: 11, nama: "Bakmi Jawa", kategori: "makanan", harga: 22000, stok: 35, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Bakmi+Jawa" },
-                { id: 12, nama: "Singkong Keju", kategori: "snack", harga: 10000, stok: 0, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Singkong" },
-            ];
+                ];
 
             // === STATE APLIKASI ===
             let keranjang = []; 
@@ -371,7 +359,7 @@
             let categories = ['semua', 'makanan', 'minuman', 'snack'];
             let lastTransaction = null; 
 
-            // === ELEMEN DOM (KASIR) ===
+            // === (KASIR) ===
             const productGrid = document.getElementById('product-grid');
             const cartItemsContainer = document.getElementById('cart-items-container');
             const cartEmptyMessage = document.getElementById('cart-empty-message');
@@ -394,17 +382,16 @@
             const btnCetakResi = document.getElementById('btn-cetak-resi');
             const customerNameInput = document.getElementById('customer-name'); 
 
-            // === ELEMEN DOM (NAVIGASI & HALAMAN) ===
-            // QuerySelectorAll otomatis mengambil semua tombol, termasuk yang baru
+            // === (NAVIGASI & HALAMAN) ===
             const navButtons = document.querySelectorAll('.nav-btn');
             const pages = document.querySelectorAll('.page-content');
             
-            // === ELEMEN DOM (HALAMAN PRODUK) ===
+            // === (HALAMAN PRODUK) ===
             const formTambahProduk = document.getElementById('form-tambah-produk');
             const daftarProdukAdminContainer = document.getElementById('daftar-produk-admin');
             const prodKategoriSelect = document.getElementById('prod-kategori');
 
-            // === ELEMEN DOM (HALAMAN PENGATURAN) ===
+            // === (HALAMAN PENGATURAN) ===
             const formSettingNama = document.getElementById('form-setting-nama');
             const settingNamaTokoInput = document.getElementById('setting-nama-toko');
             const btnSimpanNamaToko = document.getElementById('btn-simpan-nama-toko');
@@ -416,11 +403,11 @@
             const btnTambahKategori = document.getElementById('btn-tambah-kategori');
             const daftarKategoriAdmin = document.getElementById('daftar-kategori-admin');
 
-            // === ELEMEN DOM (HALAMAN RIWAYAT) ===
+            // === (HALAMAN RIWAYAT) ===
             const riwayatContainer = document.getElementById('riwayat-container');
             const riwayatEmptyMessage = document.getElementById('riwayat-empty-message');
 
-            // === ELEMEN DOM (SETUP MODAL) ===
+            // === (SETUP MODAL) ===
             const setupModal = document.getElementById('setup-modal');
             const setupForm = document.getElementById('setup-form');
             const setupNamaTokoInput = document.getElementById('setup-nama-toko');
@@ -523,7 +510,7 @@
                 });
             };
 
-            // Pindah Halaman (DIMODIFIKASI)
+            // Pindah Halaman
             const pindahHalaman = (targetPageId) => {
                 pages.forEach(page => page.classList.add('hidden'));
                 const targetPage = document.getElementById(targetPageId);
@@ -541,24 +528,23 @@
                     }
                 });
                 
-                // === LOGIKA RENDER DIPERBARUI ===
+                //  
                 if (targetPageId === 'halaman-kasir') {
                     // Update filter kategori jika ada perubahan
                     renderKategoriFilters();
                 } else if (targetPageId === 'halaman-produk') {
-                    // Hanya render yang dibutuhkan halaman produk
                     renderDaftarProdukAdmin();
                     renderKategoriOptions(); // Untuk <select> di form
                 } else if (targetPageId === 'halaman-riwayat') {
                     renderRiwayat();
                 } else if (targetPageId === 'halaman-pengaturan') {
-                    // Hanya render yang dibutuhkan halaman pengaturan
+                    
                     renderDaftarKategoriAdmin(); // Untuk daftar kategori admin
                     renderNamaToko(); // Untuk memastikan input nama toko update
                 }
             };
 
-            // Render Produk di Grid (Halaman Kasir)
+            // Render Produk di (Halaman Kasir)
             const renderProduk = () => {
                 productGrid.innerHTML = ''; 
                 const filteredProducts = allProducts.filter(produk => {
@@ -666,7 +652,7 @@
                 updateTotal();
             };
 
-            // Update Total (Subtotal, Pajak, Total)
+            // Total (Subtotal, Pajak, Total)
             const updateTotal = () => {
                 const subtotal = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0);
                 const pajak = subtotal * 0.10; 
@@ -856,7 +842,7 @@
                 });
             };
             
-            // Handle Submit Form Tambah Produk
+            // Submit Form Tambah Produk
             const handleTambahProduk = (e) => {
                 e.preventDefault();
                 const nama = document.getElementById('prod-nama').value;
@@ -949,7 +935,6 @@
             // === EVENT LISTENERS ===
 
             // Navigasi Halaman
-            // (Listener ini sudah otomatis mencakup tombol baru)
             navButtons.forEach(btn => {
                 btn.addEventListener('click', () => pindahHalaman(btn.dataset.page));
             });
@@ -998,8 +983,7 @@
                 }
             });
             
-            // --- EVENT LISTENER (PENGATURAN) ---
-            // Listener ini akan berfungsi karena elemennya ada di 'halaman-pengaturan'
+            // --- EVENT LISTENER (PENGATURAN)
             
             // Simpan Nama Toko
             formSettingNama.addEventListener('submit', (e) => {
