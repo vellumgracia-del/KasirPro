@@ -1,46 +1,46 @@
-
 <!DOCTYPE html>
 <html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Kasir Pro</title>
-    <!-- Memuat Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Memuat font Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Icon (Lucide) -->
-    <!-- Kita akan menggunakan SVG inline untuk ikon navigasi agar lebih cepat -->
 
     <style>
-        /* Menggunakan font Inter sebagai default */
+        /* (Style CSS tidak berubah, sama seperti sebelumnya) */
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        /* Custom scrollbar */
         #cart-items-container::-webkit-scrollbar,
+        #daftar-kategori-admin::-webkit-scrollbar,
+        #daftar-produk-admin::-webkit-scrollbar,
         .page-content::-webkit-scrollbar {
             width: 6px;
         }
         #cart-items-container::-webkit-scrollbar-track,
+        #daftar-kategori-admin::-webkit-scrollbar-track,
+        #daftar-produk-admin::-webkit-scrollbar-track,
         .page-content::-webkit-scrollbar-track {
-            background: #1e293b; /* slate-800 */
+            background: #1e293b;
         }
         #cart-items-container::-webkit-scrollbar-thumb,
+        #daftar-kategori-admin::-webkit-scrollbar-thumb,
+        #daftar-produk-admin::-webkit-scrollbar-thumb,
         .page-content::-webkit-scrollbar-thumb {
-            background: #475569; /* slate-600 */
+            background: #475569;
             border-radius: 3px;
         }
         #cart-items-container::-webkit-scrollbar-thumb:hover,
+        #daftar-kategori-admin::-webkit-scrollbar-thumb:hover,
+        #daftar-produk-admin::-webkit-scrollbar-thumb:hover,
         .page-content::-webkit-scrollbar-thumb:hover {
-            background: #64748b; /* slate-500 */
+            background: #64748b;
         }
-        
-        /* Menyembunyikan halaman yang tidak aktif */
         .page-content.hidden {
             display: none;
         }
@@ -48,17 +48,14 @@
 </head>
 <body class="bg-slate-900 text-slate-200">
 
-    <div class="flex h-screen overflow-hidden">
+    <div id="main-app" class="flex h-screen overflow-hidden">
     
-        <!-- Navigasi Sidebar -->
         <nav class="w-20 bg-slate-800 flex flex-col items-center py-4 space-y-4 shadow-lg z-10">
-            <!-- Logo/Brand -->
-            <div class="w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center">
+            <div id="logo-container" class="w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7V2h5l2 5-2 5-5-5Z"/><path d="m14 7 5 5-5 5V7Z"/><path d="M9 12 7 7l5 5-5 5Z"/><path d="m16 12 5 5-5-5-5 5Z"/></svg>
             </div>
             
             <ul class="flex flex-col space-y-2">
-                <!-- Tombol Navigasi: Kasir (Aktif by default) -->
                 <li>
                     <button id="nav-kasir" data-page="halaman-kasir" class="nav-btn bg-cyan-600 text-white p-3 rounded-lg group relative">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
@@ -67,7 +64,6 @@
                         </span>
                     </button>
                 </li>
-                <!-- Tombol Navigasi: Produk -->
                 <li>
                     <button id="nav-produk" data-page="halaman-produk" class="nav-btn text-slate-400 hover:bg-slate-700 hover:text-white p-3 rounded-lg group relative">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line><line x1="12" y1="12" x2="7" y2="9.5"></line><line x1="12" y1="12" x2="17" y2="9.5"></line></svg>
@@ -76,7 +72,6 @@
                         </span>
                     </button>
                 </li>
-                <!-- Tombol Navigasi: Riwayat -->
                 <li>
                     <button id="nav-riwayat" data-page="halaman-riwayat" class="nav-btn text-slate-400 hover:bg-slate-700 hover:text-white p-3 rounded-lg group relative">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
@@ -85,22 +80,26 @@
                         </span>
                     </button>
                 </li>
-            </ul>
+                
+                <li>
+                    <button id="nav-pengaturan" data-page="halaman-pengaturan" class="nav-btn text-slate-400 hover:bg-slate-700 hover:text-white p-3 rounded-lg group relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a8.03 8.03 0 0 0-1.4-1.4l.96-2.39a.5.5 0 0 0-.22-.61l-3.32-1.92a.5.5 0 0 0-.61.12l-1.58 2.03c-.3-.04-.61-.06-.94-.06s-.64.02-.94.07L7.06 2.5a.49.49 0 0 0-.61-.12L4.13 4.3a.5.5 0 0 0-.22.61l.96 2.39a8.03 8.03 0 0 0-1.4 1.4L1.08 7.77a.5.5 0 0 0-.61.22L.15 11.31a.49.49 0 0 0 .12.61l2.03 1.58c.04.3.06.61.06.94 0 .32-.02.64-.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32a.5.5 0 0 0 .61.22l2.39-.96a8.03 8.03 0 0 0 1.4 1.4l-.96 2.39a.5.5 0 0 0 .22.61l3.32 1.92a.5.5 0 0 0 .61-.12l1.58-2.03c.3.04.61.06.94.06s.64-.02.94-.07l1.58 2.03a.49.49 0 0 0 .61.12l3.32-1.92a.5.5 0 0 0 .22-.61l-.96-2.39a8.03 8.03 0 0 0 1.4-1.4l2.39.96a.5.5 0 0 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.61l-2.03-1.58zM12 15a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>
+                        <span class="absolute left-full ml-3 px-2 py-1 bg-slate-700 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                          Pengaturan
+                        </span>
+                    </button>
+                </li>
+                </ul>
         </nav>
 
-        <!-- Konten Utama (Wrapper untuk semua halaman) -->
         <div class="flex-1 h-screen overflow-hidden">
         
-            <!-- Halaman 1: Kasir (Yang sudah ada) -->
             <div id="halaman-kasir" class="page-content flex flex-col md:flex-row h-full">
-                <!-- Bagian Kiri: Produk & Kategori -->
                 <main class="w-full md:w-3/5 lg:w-2/3 h-full overflow-y-auto p-6">
-                    <!-- Header & Search -->
                     <header class="mb-6">
-                        <h1 class="text-3xl font-bold text-white">Toko Sejahtera</h1>
+                        <h1 id="nama-toko-display" class="text-3xl font-bold text-white">Toko Sejahtera</h1>
                         <p class="text-lg text-slate-400">Selamat datang, Kasir!</p>
                         
-                        <!-- Kotak Pencarian -->
                         <div class="relative mt-4">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -114,32 +113,26 @@
                         </div>
                     </header>
 
-                    <!-- Filter Kategori -->
                     <nav class="mb-6">
                         <ul class="flex space-x-2" id="kategori-filter">
-                            <li><button data-kategori="semua" class="kategori-btn bg-cyan-600 text-white px-4 py-2 rounded-full font-semibold">Semua</button></li>
-                            <li><button data-kategori="makanan" class="kategori-btn bg-slate-700 text-slate-300 px-4 py-2 rounded-full font-semibold hover:bg-slate-600">Makanan</button></li>
-                            <li><button data-kategori="minuman" class="kategori-btn bg-slate-700 text-slate-300 px-4 py-2 rounded-full font-semibold hover:bg-slate-600">Minuman</button></li>
-                            <li><button data-kategori="snack" class="kategori-btn bg-slate-700 text-slate-300 px-4 py-2 rounded-full font-semibold hover:bg-slate-600">Snack</button></li>
-                        </ul>
+                            </ul>
                     </nav>
 
-                    <!-- Grid Produk -->
                     <section id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                        <!-- Produk akan dimuat oleh JavaScript -->
-                    </section>
+                        </section>
                 </main>
 
-                <!-- Bagian Kanan: Keranjang (Struk) -->
                 <aside class="w-full md:w-2/5 lg:w-1/3 h-full bg-slate-800 border-l border-slate-700 flex flex-col">
-                    <!-- Header Keranjang -->
                     <header class="p-6 border-b border-slate-700">
                         <h2 class="text-2xl font-bold text-white">Pesanan Saat Ini</h2>
                     </header>
 
-                    <!-- Daftar Item Keranjang -->
+                    <div class="p-6 pb-0">
+                        <label for="customer-name" class="block text-sm font-medium text-slate-300 mb-1">Nama Pelanggan (Opsional)</label>
+                        <input type="text" id="customer-name" placeholder="Cth: Meja 5 / Budi" class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+
                     <div id="cart-items-container" class="flex-1 overflow-y-auto p-6">
-                        <!-- Pesan saat keranjang kosong -->
                         <div id="cart-empty-message" class="flex flex-col items-center justify-center h-full text-slate-500">
                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                             <p class="mt-2 text-lg">Keranjang kosong</p>
@@ -147,7 +140,6 @@
                         </div>
                     </div>
 
-                    <!-- Total & Pembayaran -->
                     <footer class="p-6 bg-slate-900 border-t border-slate-700">
                         <div class="space-y-3 mb-4">
                             <div class="flex justify-between text-slate-300">
@@ -189,12 +181,10 @@
                 </aside>
             </div>
 
-            <!-- Halaman 2: Manajemen Produk (Hidden by default) -->
             <div id="halaman-produk" class="page-content hidden h-full overflow-y-auto p-8">
                 <h1 class="text-3xl font-bold text-white mb-6">Manajemen Produk</h1>
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Kolom Kiri: Form Tambah Produk -->
                     <div class="lg:col-span-1 bg-slate-800 p-6 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-semibold text-white mb-4">Tambah Produk Baru</h2>
                         <form id="form-tambah-produk" class="space-y-4">
@@ -205,10 +195,7 @@
                             <div>
                                 <label for="prod-kategori" class="block text-sm font-medium text-slate-300 mb-1">Kategori</label>
                                 <select id="prod-kategori" required class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                                    <option value="makanan">Makanan</option>
-                                    <option value="minuman">Minuman</option>
-                                    <option value="snack">Snack</option>
-                                </select>
+                                    </select>
                             </div>
                             <div>
                                 <label for="prod-harga" class="block text-sm font-medium text-slate-300 mb-1">Harga</label>
@@ -233,34 +220,78 @@
                         </form>
                     </div>
 
-                    <!-- Kolom Kanan: Daftar Produk -->
                     <div class="lg:col-span-2 bg-slate-800 p-6 rounded-lg shadow-lg">
                         <h2 class="text-2xl font-semibold text-white mb-4">Daftar Produk Saat Ini</h2>
                         <div id="daftar-produk-admin" class="space-y-3 max-h-[600px] overflow-y-auto">
-                            <!-- Daftar produk admin akan dimuat oleh JavaScript -->
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Halaman 3: Riwayat Penjualan (Hidden by default) -->
             <div id="halaman-riwayat" class="page-content hidden h-full overflow-y-auto p-8">
                 <h1 class="text-3xl font-bold text-white mb-6">Riwayat Penjualan</h1>
                 <div id="riwayat-container" class="space-y-4">
-                    <!-- Pesan kosong -->
                     <div id="riwayat-empty-message" class="text-slate-500 text-center py-10">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                         <p class="text-lg">Belum ada riwayat penjualan.</p>
                     </div>
-                    <!-- Riwayat akan dimuat oleh JavaScript -->
-                </div>
+                    </div>
             </div>
 
-        </div>
-    </div>
+            <div id="halaman-pengaturan" class="page-content hidden h-full overflow-y-auto p-8">
+                <h1 class="text-3xl font-bold text-white mb-6">Pengaturan Toko & Kategori</h1>
+                
+                <div class="bg-slate-800 p-6 rounded-lg shadow-lg mb-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Pengaturan Toko</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <form id="form-setting-nama" class="space-y-3">
+                            <div>
+                                <label for="setting-nama-toko" class="block text-sm font-medium text-slate-300 mb-1">Nama Toko</label>
+                                <input type="text" id="setting-nama-toko" class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            </div>
+                            <button id="btn-simpan-nama-toko" type="submit" class="w-full md:w-auto bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-cyan-500 transition duration-200">
+                                Simpan Nama
+                            </button>
+                        </form>
+                        <form id="form-setting-logo" class="space-y-3">
+                             <div>
+                                <label for="setting-logo-file" class="block text-sm font-medium text-slate-300 mb-1">Upload Logo Baru</label>
+                                <input type="file" id="setting-logo-file" accept="image/*" class="w-full text-sm text-slate-400
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-full file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-cyan-600 file:text-white
+                                    hover:file:bg-cyan-500">
+                            </div>
+                            <button id="btn-simpan-logo" type="submit" class="w-full md:w-auto bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-cyan-500 transition duration-200">
+                                Simpan Logo
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
-    <!-- Modal Sukses Pembayaran (Sama seperti sebelumnya) -->
-    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden transition-opacity">
+                <div class="bg-slate-800 p-6 rounded-lg shadow-lg mb-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Manajemen Kategori</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <form id="form-tambah-kategori" class="space-y-3">
+                            <div>
+                                <label for="kategori-baru-nama" class="block text-sm font-medium text-slate-300 mb-1">Nama Kategori Baru</label>
+                                <input type="text" id="kategori-baru-nama" placeholder="Cth: elektronik" class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            </div>
+                            <button id="btn-tambah-kategori" type="submit" class="w-full md:w-auto bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-cyan-500 transition duration-200">
+                                Tambah Kategori
+                            </button>
+                        </form>
+                        <div>
+                             <label class="block text-sm font-medium text-slate-300 mb-2">Kategori Saat Ini</label>
+                             <div id="daftar-kategori-admin" class="space-y-2 max-h-32 overflow-y-auto">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+    </div> <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden transition-opacity">
         <div class="bg-slate-800 p-8 rounded-xl shadow-2xl text-center max-w-sm w-full transform scale-95 transition-transform">
             <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -270,22 +301,51 @@
             <p id="modal-total" class="text-3xl font-bold text-cyan-400 mb-4">Rp 0</p>
             <p class="text-lg text-slate-300 mb-1">Kembalian:</p>
             <p id="modal-kembalian" class="text-3xl font-bold text-white mb-6">Rp 0</p>
-            <button id="btn-tutup-modal" class="w-full bg-cyan-600 text-white font-bold py-3 rounded-lg hover:bg-cyan-500 transition duration-200">
-                Tutup
-            </button>
+            
+            <div class="grid grid-cols-2 gap-3">
+                 <button id="btn-cetak-resi" class="w-full bg-slate-700 text-slate-300 font-bold py-3 rounded-lg hover:bg-slate-600 transition duration-200">
+                    Cetak Resi
+                </button>
+                <button id="btn-tutup-modal" class="w-full bg-cyan-600 text-white font-bold py-3 rounded-lg hover:bg-cyan-500 transition duration-200">
+                    Transaksi Baru
+                </button>
+            </div>
         </div>
     </div>
     
-    <!-- Notifikasi Kustom -->
-    <div id="notifikasi" class="fixed top-5 right-5 bg-red-600 text-white px-5 py-3 rounded-lg shadow-lg hidden transition-all duration-300 z-[100]">
-        <!-- Pesan notifikasi akan diisi oleh JS -->
+    <div id="setup-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[100] transition-opacity">
+        <div class="bg-slate-800 p-8 rounded-xl shadow-2xl max-w-md w-full transform transition-transform">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">Selamat Datang!</h2>
+            <p class="text-slate-300 mb-6 text-center">Silakan atur nama toko dan logo Anda untuk memulai.</p>
+            <form id="setup-form" class="space-y-4">
+                <div>
+                    <label for="setup-nama-toko" class="block text-sm font-medium text-slate-300 mb-1">Nama Toko</label>
+                    <input type="text" id="setup-nama-toko" class="w-full bg-slate-700 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" value="Toko Sejahtera" required>
+                </div>
+                <div>
+                    <label for="setup-logo-file" class="block text-sm font-medium text-slate-300 mb-1">Upload Logo (Opsional)</label>
+                    <input type="file" id="setup-logo-file" accept="image/*" class="w-full text-sm text-slate-400
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-cyan-600 file:text-white
+                        hover:file:bg-cyan-500">
+                </div>
+                <button type="submit" class="w-full bg-cyan-600 text-white font-bold py-3 rounded-lg hover:bg-cyan-500 transition duration-200 text-lg">
+                    Mulai Gunakan Kasir
+                </button>
+            </form>
+        </div>
     </div>
+
+    <div id="notifikasi" class="fixed top-5 right-5 bg-red-600 text-white px-5 py-3 rounded-lg shadow-lg hidden transition-all duration-300 z-[100]">
+        </div>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // === DATABASE PRODUK (DENGAN STOK) ===
+            // === DATABASE PRODUK ===
             let allProducts = [
                 { id: 1, nama: "Nasi Goreng Spesial", kategori: "makanan", harga: 25000, stok: 50, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Nasi+Goreng" },
                 { id: 2, nama: "Ayam Bakar Madu", kategori: "makanan", harga: 35000, stok: 30, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Ayam+Bakar" },
@@ -298,7 +358,7 @@
                 { id: 9, nama: "Pisang Goreng Keju", kategori: "snack", harga: 15000, stok: 30, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Pisang+Goreng" },
                 { id: 10, nama: "Air Mineral", kategori: "minuman", harga: 4000, stok: 200, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Air+Mineral" },
                 { id: 11, nama: "Bakmi Jawa", kategori: "makanan", harga: 22000, stok: 35, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Bakmi+Jawa" },
-                { id: 12, nama: "Singkong Keju", kategori: "snack", harga: 10000, stok: 0, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Singkong" }, // Contoh stok habis
+                { id: 12, nama: "Singkong Keju", kategori: "snack", harga: 10000, stok: 0, gambar: "https://placehold.co/150x150/1e293b/94a3b8?text=Singkong" },
             ];
 
             // === STATE APLIKASI ===
@@ -306,6 +366,10 @@
             let riwayatPenjualan = [];
             let filterKategori = 'semua';
             let searchTerm = '';
+            let namaToko = "Toko Sejahtera";
+            let logoUrl = null; 
+            let categories = ['semua', 'makanan', 'minuman', 'snack'];
+            let lastTransaction = null; 
 
             // === ELEMEN DOM (KASIR) ===
             const productGrid = document.getElementById('product-grid');
@@ -325,24 +389,42 @@
             const modalTotal = document.getElementById('modal-total');
             const modalKembalian = document.getElementById('modal-kembalian');
             const notifikasiEl = document.getElementById('notifikasi');
+            const namaTokoDisplay = document.getElementById('nama-toko-display');
+            const logoContainer = document.getElementById('logo-container');
+            const btnCetakResi = document.getElementById('btn-cetak-resi');
+            const customerNameInput = document.getElementById('customer-name'); 
 
             // === ELEMEN DOM (NAVIGASI & HALAMAN) ===
+            // QuerySelectorAll otomatis mengambil semua tombol, termasuk yang baru
             const navButtons = document.querySelectorAll('.nav-btn');
             const pages = document.querySelectorAll('.page-content');
-            const navKasir = document.getElementById('nav-kasir');
-            const navProduk = document.getElementById('nav-produk');
-            const navRiwayat = document.getElementById('nav-riwayat');
-            const halamanKasir = document.getElementById('halaman-kasir');
-            const halamanProduk = document.getElementById('halaman-produk');
-            const halamanRiwayat = document.getElementById('halaman-riwayat');
-
+            
             // === ELEMEN DOM (HALAMAN PRODUK) ===
             const formTambahProduk = document.getElementById('form-tambah-produk');
             const daftarProdukAdminContainer = document.getElementById('daftar-produk-admin');
+            const prodKategoriSelect = document.getElementById('prod-kategori');
+
+            // === ELEMEN DOM (HALAMAN PENGATURAN) ===
+            const formSettingNama = document.getElementById('form-setting-nama');
+            const settingNamaTokoInput = document.getElementById('setting-nama-toko');
+            const btnSimpanNamaToko = document.getElementById('btn-simpan-nama-toko');
+            const formSettingLogo = document.getElementById('form-setting-logo');
+            const settingLogoFileInput = document.getElementById('setting-logo-file');
+            const btnSimpanLogo = document.getElementById('btn-simpan-logo');
+            const formTambahKategori = document.getElementById('form-tambah-kategori');
+            const kategoriBaruNamaInput = document.getElementById('kategori-baru-nama');
+            const btnTambahKategori = document.getElementById('btn-tambah-kategori');
+            const daftarKategoriAdmin = document.getElementById('daftar-kategori-admin');
 
             // === ELEMEN DOM (HALAMAN RIWAYAT) ===
             const riwayatContainer = document.getElementById('riwayat-container');
             const riwayatEmptyMessage = document.getElementById('riwayat-empty-message');
+
+            // === ELEMEN DOM (SETUP MODAL) ===
+            const setupModal = document.getElementById('setup-modal');
+            const setupForm = document.getElementById('setup-form');
+            const setupNamaTokoInput = document.getElementById('setup-nama-toko');
+            const setupLogoFileInput = document.getElementById('setup-logo-file');
 
 
             // === FUNGSI ===
@@ -350,16 +432,14 @@
             // Tampilkan Notifikasi Kustom
             let notifikasiTimeout;
             const showNotifikasi = (pesan, tipe = 'error') => {
-                clearTimeout(notifikasiTimeout); // Hapus timeout sebelumnya jika ada
+                clearTimeout(notifikasiTimeout); 
                 notifikasiEl.textContent = pesan;
                 notifikasiEl.classList.remove('hidden', 'bg-red-600', 'bg-green-600');
-                
                 if (tipe === 'error') {
                     notifikasiEl.classList.add('bg-red-600');
                 } else if (tipe === 'sukses') {
                     notifikasiEl.classList.add('bg-green-600');
                 }
-
                 notifikasiTimeout = setTimeout(() => {
                     notifikasiEl.classList.add('hidden');
                 }, 3000);
@@ -374,18 +454,83 @@
                 }).format(angka);
             };
             
-            // Pindah Halaman
+            // Render Nama Toko
+            const renderNamaToko = () => {
+                namaTokoDisplay.textContent = namaToko;
+                settingNamaTokoInput.value = namaToko; 
+            };
+
+            // Render Logo
+            const renderLogo = () => {
+                if (logoUrl) {
+                    logoContainer.innerHTML = `<img src="${logoUrl}" alt="Logo Toko" class="w-full h-full rounded-lg object-cover">`;
+                    logoContainer.className = 'w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center overflow-hidden';
+                } else {
+                    logoContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7V2h5l2 5-2 5-5-5Z"/><path d="m14 7 5 5-5 5V7Z"/><path d="M9 12 7 7l5 5-5 5Z"/><path d="m16 12 5 5-5-5-5 5Z"/></svg>`;
+                    logoContainer.className = 'w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center';
+                }
+            };
+
+            // Render Filter Kategori (di Halaman Kasir)
+            const renderKategoriFilters = () => {
+                kategoriFilter.innerHTML = ''; 
+                categories.forEach(kategori => {
+                    const li = document.createElement('li');
+                    const button = document.createElement('button');
+                    button.dataset.kategori = kategori;
+                    button.textContent = kategori.charAt(0).toUpperCase() + kategori.slice(1); 
+                    button.className = 'kategori-btn px-4 py-2 rounded-full font-semibold transition-colors';
+                    if (kategori === filterKategori) {
+                        button.classList.add('bg-cyan-600', 'text-white');
+                    } else {
+                        button.classList.add('bg-slate-700', 'text-slate-300', 'hover:bg-slate-600');
+                    }
+                    li.appendChild(button);
+                    kategoriFilter.appendChild(li);
+                });
+            };
+            
+            // Render Opsi Kategori (di Form Tambah Produk)
+            const renderKategoriOptions = () => {
+                prodKategoriSelect.innerHTML = ''; 
+                categories.forEach(kategori => {
+                    if (kategori === 'semua') return; 
+                    const option = document.createElement('option');
+                    option.value = kategori;
+                    option.textContent = kategori.charAt(0).toUpperCase() + kategori.slice(1);
+                    prodKategoriSelect.appendChild(option);
+                });
+            };
+            
+            // Render Daftar Kategori (di Halaman Admin)
+            const renderDaftarKategoriAdmin = () => {
+                daftarKategoriAdmin.innerHTML = ''; 
+                const adminCategories = categories.filter(k => k !== 'semua');
+                if (adminCategories.length === 0) {
+                    daftarKategoriAdmin.innerHTML = `<p class="text-slate-500 text-sm">Belum ada kategori kustom.</p>`;
+                    return;
+                }
+                adminCategories.forEach(kategori => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between bg-slate-700 px-3 py-2 rounded-lg';
+                    item.innerHTML = `
+                        <span class="text-sm font-medium text-white">${kategori.charAt(0).toUpperCase() + kategori.slice(1)}</span>
+                        <button class="btn-hapus-kategori text-red-500 hover:text-red-400" data-kategori="${kategori}" title="Hapus Kategori">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    `;
+                    daftarKategoriAdmin.appendChild(item);
+                });
+            };
+
+            // Pindah Halaman (DIMODIFIKASI)
             const pindahHalaman = (targetPageId) => {
-                // Sembunyikan semua halaman
                 pages.forEach(page => page.classList.add('hidden'));
-                
-                // Tampilkan halaman target
                 const targetPage = document.getElementById(targetPageId);
                 if (targetPage) {
                     targetPage.classList.remove('hidden');
                 }
                 
-                // Update style tombol navigasi
                 navButtons.forEach(btn => {
                     if (btn.dataset.page === targetPageId) {
                         btn.classList.add('bg-cyan-600', 'text-white');
@@ -396,18 +541,26 @@
                     }
                 });
                 
-                // Render konten halaman jika perlu
-                if (targetPageId === 'halaman-produk') {
+                // === LOGIKA RENDER DIPERBARUI ===
+                if (targetPageId === 'halaman-kasir') {
+                    // Update filter kategori jika ada perubahan
+                    renderKategoriFilters();
+                } else if (targetPageId === 'halaman-produk') {
+                    // Hanya render yang dibutuhkan halaman produk
                     renderDaftarProdukAdmin();
+                    renderKategoriOptions(); // Untuk <select> di form
                 } else if (targetPageId === 'halaman-riwayat') {
                     renderRiwayat();
+                } else if (targetPageId === 'halaman-pengaturan') {
+                    // Hanya render yang dibutuhkan halaman pengaturan
+                    renderDaftarKategoriAdmin(); // Untuk daftar kategori admin
+                    renderNamaToko(); // Untuk memastikan input nama toko update
                 }
             };
 
             // Render Produk di Grid (Halaman Kasir)
             const renderProduk = () => {
-                productGrid.innerHTML = ''; // Kosongkan grid
-
+                productGrid.innerHTML = ''; 
                 const filteredProducts = allProducts.filter(produk => {
                     const matchKategori = (filterKategori === 'semua' || produk.kategori === filterKategori);
                     const matchSearch = (produk.nama.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -422,7 +575,6 @@
                 filteredProducts.forEach(produk => {
                     const productCard = document.createElement('div');
                     productCard.className = `bg-slate-800 rounded-lg shadow-lg overflow-hidden relative ${produk.stok > 0 ? 'cursor-pointer transform transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]' : 'opacity-50 cursor-not-allowed'}`;
-                    
                     productCard.innerHTML = `
                         <img src="${produk.gambar}" alt="${produk.nama}" class="w-full h-32 object-cover">
                         <div class="p-4">
@@ -436,68 +588,54 @@
                             </div>
                         ` : ''}
                     `;
-                    
-                    // Tambah event listener untuk menambah ke keranjang (hanya jika stok > 0)
                     if (produk.stok > 0) {
                         productCard.addEventListener('click', () => tambahKeKeranjang(produk.id));
                     }
-                    
                     productGrid.appendChild(productCard);
                 });
             };
 
-            // Tambah Produk ke Keranjang (dengan cek stok)
+            // Tambah Produk ke Keranjang
             const tambahKeKeranjang = (id) => {
                 const produk = allProducts.find(p => p.id === id);
                 if (produk.stok <= 0) {
                     showNotifikasi("Stok produk ini sudah habis.");
                     return;
                 }
-                
                 const itemDiKeranjang = keranjang.find(item => item.id === id);
                 const jumlahDiKeranjang = itemDiKeranjang ? itemDiKeranjang.jumlah : 0;
-                
                 if (jumlahDiKeranjang >= produk.stok) {
                     showNotifikasi("Stok di keranjang sudah maksimal (total stok: " + produk.stok + ").");
                     return;
                 }
-
                 if (itemDiKeranjang) {
                     itemDiKeranjang.jumlah++;
                 } else {
                     keranjang.push({ ...produk, jumlah: 1 });
                 }
-                
                 renderKeranjang();
             };
 
-            // Ubah Jumlah Item di Keranjang (dengan cek stok)
+            // Ubah Jumlah Item di Keranjang
             const ubahJumlahItem = (id, delta) => {
                 const itemDiKeranjang = keranjang.find(item => item.id === id);
                 if (!itemDiKeranjang) return;
-
                 const produk = allProducts.find(p => p.id === id);
                 const jumlahBaru = itemDiKeranjang.jumlah + delta;
-
-                // Cek stok saat menambah
                 if (delta > 0 && jumlahBaru > produk.stok) {
                     showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
                     return;
                 }
-
                 itemDiKeranjang.jumlah = jumlahBaru;
-
                 if (itemDiKeranjang.jumlah <= 0) {
                     keranjang = keranjang.filter(item => item.id !== id);
                 }
-                
                 renderKeranjang();
             };
 
             // Render Ulang Tampilan Keranjang
             const renderKeranjang = () => {
                 cartItemsContainer.innerHTML = '';
-
                 if (keranjang.length === 0) {
                     cartEmptyMessage.classList.remove('hidden');
                 } else {
@@ -520,10 +658,8 @@
                             </div>
                             <p class="text-sm font-semibold text-white w-1/4 text-right">${formatRupiah(item.harga * item.jumlah)}</p>
                         `;
-
                         cartItem.querySelector('.btn-kurang').addEventListener('click', () => ubahJumlahItem(item.id, -1));
                         cartItem.querySelector('.btn-tambah').addEventListener('click', () => ubahJumlahItem(item.id, 1));
-
                         cartItemsContainer.appendChild(cartItem);
                     });
                 }
@@ -533,13 +669,11 @@
             // Update Total (Subtotal, Pajak, Total)
             const updateTotal = () => {
                 const subtotal = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0);
-                const pajak = subtotal * 0.10; // Pajak 10%
+                const pajak = subtotal * 0.10; 
                 const total = subtotal + pajak;
-
                 subtotalEl.textContent = formatRupiah(subtotal);
                 pajakEl.textContent = formatRupiah(pajak);
                 totalEl.textContent = formatRupiah(total);
-                
                 btnBayar.disabled = (keranjang.length === 0);
                 hitungKembalian();
             };
@@ -555,7 +689,6 @@
             const hitungKembalian = () => {
                 const total = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0) * 1.10;
                 let jumlahBayar = parseFloat(jumlahBayarInput.value.replace(/[^0-9]/g, ''));
-                
                 if (isNaN(jumlahBayar) || jumlahBayar < total) {
                     kembalianEl.textContent = "Rp 0";
                     kembalianEl.classList.remove('text-cyan-400');
@@ -568,21 +701,20 @@
                     kembalianEl.classList.remove('text-red-500');
                     btnBayar.disabled = false;
                 }
-                
                 if (keranjang.length === 0) {
-                     btnBayar.disabled = true;
+                    btnBayar.disabled = true;
                 }
             };
             
-            // Proses Pembayaran (Update Stok & Riwayat)
+            // Proses Pembayaran
             const prosesBayar = () => {
                 const subtotal = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0);
                 const pajak = subtotal * 0.10;
                 const total = subtotal + pajak;
                 let jumlahBayar = parseFloat(jumlahBayarInput.value.replace(/[^0-9]/g, ''));
                 const kembalian = jumlahBayar - total;
+                const namaPelanggan = customerNameInput.value.trim();
 
-                // 1. Kurangi Stok
                 keranjang.forEach(itemKeranjang => {
                     const produkDiDb = allProducts.find(p => p.id === itemKeranjang.id);
                     if (produkDiDb) {
@@ -590,11 +722,11 @@
                     }
                 });
                 
-                // 2. Tambah ke Riwayat Penjualan
                 const transaksi = {
                     id: `TRX-${new Date().getTime()}`,
                     tanggal: new Date(),
-                    items: JSON.parse(JSON.stringify(keranjang)), // Deep copy keranjang
+                    pelanggan: namaPelanggan || 'Walk-in', 
+                    items: JSON.parse(JSON.stringify(keranjang)), 
                     subtotal: subtotal,
                     pajak: pajak,
                     total: total,
@@ -602,22 +734,24 @@
                     kembalian: kembalian
                 };
                 riwayatPenjualan.push(transaksi);
+                lastTransaction = transaksi;
 
-                // 3. Tampilkan modal sukses
                 modalTotal.textContent = formatRupiah(total);
                 modalKembalian.textContent = formatRupiah(kembalian);
                 successModal.classList.remove('hidden');
                 successModal.querySelector('div').classList.add('scale-100');
             };
             
-            // Transaksi Baru (Reset)
+            // Transaksi Baru
             const mulaiBaru = () => {
                 keranjang = [];
                 jumlahBayarInput.value = '';
+                customerNameInput.value = ''; 
                 renderKeranjang();
                 kembalianEl.textContent = "Rp 0";
                 kembalianEl.classList.add('text-cyan-400');
                 kembalianEl.classList.remove('text-red-500');
+                lastTransaction = null;
             };
             
             // Tutup Modal
@@ -625,7 +759,72 @@
                 successModal.classList.add('hidden');
                 successModal.querySelector('div').classList.remove('scale-100');
                 mulaiBaru();
-                renderProduk(); // Render ulang grid produk untuk update stok
+                renderProduk(); 
+            };
+            
+            // Cetak Resi
+            const handleCetakResi = () => {
+                if (!lastTransaction) {
+                    showNotifikasi("Data transaksi tidak ditemukan.");
+                    return;
+                }
+                const trx = lastTransaction;
+                let itemsHtml = trx.items.map(item => `
+                    <tr>
+                        <td style="padding: 2px 0;">${item.nama}</td>
+                        <td style="padding: 2px 0; text-align: right;">${item.jumlah} x ${formatRupiah(item.harga)}</td>
+                        <td style="padding: 2px 0; text-align: right;">${formatRupiah(item.harga * item.jumlah)}</td>
+                    </tr>
+                `).join('');
+
+                const resiHtml = `
+                    <style>
+                        body { font-family: 'Arial', sans-serif; margin: 0; padding: 10px; font-size: 10px; }
+                        h3 { margin: 0 0 5px 0; text-align: center; }
+                        p { margin: 2px 0; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+                        th { text-align: left; border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 4px 0; }
+                        td { padding: 2px 0; }
+                        .total-row td { border-top: 1px dashed #000; padding-top: 4px; font-weight: bold; }
+                        .text-right { text-align: right; }
+                        @media print { @page { margin: 0; } body { margin: 10px; } }
+                    </style>
+                    <h3>${namaToko}</h3>
+                    <p style="text-align: center;">Struk Pembayaran</p>
+                    <hr style="border: none; border-top: 1px dashed #000; margin: 5px 0;">
+                    <p>ID: ${trx.id}</p>
+                    <p>Tgl: ${trx.tanggal.toLocaleString('id-ID')}</p>
+                    ${trx.pelanggan !== 'Walk-in' ? `<p>Pelanggan: ${trx.pelanggan}</p>` : ''}
+                    <hr style="border: none; border-top: 1px dashed #000; margin: 5px 0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40%;">Item</th>
+                                <th style="width: 30%; text-align: right;">Jml/Harga</th>
+                                <th style="width: 30%; text-align: right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody> ${itemsHtml} </tbody>
+                        <tfoot>
+                            <tr class="total-row"><td colspan="2">Subtotal</td><td class="text-right">${formatRupiah(trx.subtotal)}</td></tr>
+                            <tr><td colspan="2">Pajak (10%)</td><td class="text-right">${formatRupiah(trx.pajak)}</td></tr>
+                            <tr><td colspan="2" style="font-weight: bold;">TOTAL</td><td class="text-right" style="font-weight: bold;">${formatRupiah(trx.total)}</td></tr>
+                            <tr><td colspan="2">Bayar</td><td class="text-right">${formatRupiah(trx.bayar)}</td></tr>
+                            <tr><td colspan="2">Kembalian</td><td class="text-right">${formatRupiah(trx.kembalian)}</td></tr>
+                        </tfoot>
+                    </table>
+                    <hr style="border: none; border-top: 1px dashed #000; margin: 5px 0;">
+                    <p style="text-align: center;">Terima kasih!</p>
+                `;
+
+                const printWindow = window.open('', '', 'width=300,height=500');
+                printWindow.document.write(resiHtml);
+                printWindow.document.close();
+                printWindow.focus();
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 250); 
             };
 
             // Render Daftar Produk (Halaman Admin)
@@ -635,7 +834,6 @@
                     daftarProdukAdminContainer.innerHTML = `<p class="text-slate-500 text-center">Belum ada produk.</p>`;
                     return;
                 }
-                
                 allProducts.slice().reverse().forEach(produk => {
                     const item = document.createElement('div');
                     item.className = 'flex items-center justify-between bg-slate-700 p-3 rounded-lg';
@@ -661,90 +859,77 @@
             // Handle Submit Form Tambah Produk
             const handleTambahProduk = (e) => {
                 e.preventDefault();
-                
                 const nama = document.getElementById('prod-nama').value;
                 const kategori = document.getElementById('prod-kategori').value;
                 const harga = parseFloat(document.getElementById('prod-harga').value);
                 const stok = parseInt(document.getElementById('prod-stok').value);
                 
-                // --- LOGIKA GAMBAR BARU ---
-                const fileInput = document.getElementById('prod-gambar-file');
-                let gambar = ''; // Ini akan menjadi Object URL
+                if (!kategori) {
+                    showNotifikasi("Kategori tidak valid. Tambahkan kategori di Pengaturan.", "error");
+                    return;
+                }
                 
+                const fileInput = document.getElementById('prod-gambar-file');
+                let gambar = ''; 
                 if (fileInput.files && fileInput.files[0]) {
-                    // Buat URL sementara untuk gambar yang diunggah
                     gambar = URL.createObjectURL(fileInput.files[0]);
                 } else {
-                    // Fallback ke placeholder jika tidak ada gambar yang diunggah
                     gambar = `https://placehold.co/150x150/1e293b/94a3b8?text=${nama.replace(/\s+/g, '+')}`;
                 }
-                // --- AKHIR LOGIKA BARU ---
                 
                 const newId = allProducts.length > 0 ? Math.max(...allProducts.map(p => p.id)) + 1 : 1;
-                
                 const newProduct = { id: newId, nama, kategori, harga, stok, gambar };
-                
                 allProducts.push(newProduct);
                 
-                renderProduk(); // Update grid di halaman kasir
-                renderDaftarProdukAdmin(); // Update list di halaman admin
-                
+                renderProduk(); 
+                renderDaftarProdukAdmin(); 
                 showNotifikasi("Produk berhasil ditambahkan!", "sukses");
                 formTambahProduk.reset();
+                fileInput.value = '';
+                renderKategoriOptions();
             };
             
             // Handle Hapus Produk
             const hapusProduk = (id) => {
-                // Konfirmasi sederhana (karena window.confirm() tidak diizinkan, kita langsung hapus)
-                // Di aplikasi nyata, Anda akan menggunakan modal kustom di sini.
-                
                 const idToRemove = parseInt(id);
-                
-                // 1. Hapus dari database utama
                 allProducts = allProducts.filter(p => p.id !== idToRemove);
                 
-                // 2. Hapus dari keranjang saat ini (jika ada)
                 const itemDiKeranjang = keranjang.find(item => item.id === idToRemove);
                 if (itemDiKeranjang) {
                     keranjang = keranjang.filter(item => item.id !== idToRemove);
                 }
                 
-                // 3. Render ulang semua yang terdampak
-                renderDaftarProdukAdmin(); // Update list di halaman admin
-                renderProduk(); // Update grid di halaman kasir
-                
-                // 4. Render ulang keranjang jika itemnya ada di sana
+                renderDaftarProdukAdmin(); 
+                renderProduk(); 
                 if (itemDiKeranjang) {
-                    renderKeranjang(); // Ini akan memanggil updateTotal juga
+                    renderKeranjang();
                 }
-                
-                // 5. Tampilkan notifikasi
                 showNotifikasi("Produk berhasil dihapus.", "sukses");
             };
             
             // Render Riwayat Penjualan
             const renderRiwayat = () => {
-                riwayatContainer.innerHTML = ''; // Kosongkan
+                riwayatContainer.innerHTML = ''; 
                 if (riwayatPenjualan.length === 0) {
                     riwayatContainer.appendChild(riwayatEmptyMessage);
                     return;
                 }
-
                 riwayatPenjualan.slice().reverse().forEach(trx => {
                     const trxCard = document.createElement('div');
                     trxCard.className = 'bg-slate-800 p-5 rounded-lg shadow-lg';
-                    
                     const itemsHtml = trx.items.map(item => `
                         <li class="flex justify-between text-sm text-slate-300">
                             <span>${item.nama} <span class="text-slate-400">x ${item.jumlah}</span></span>
                             <span>${formatRupiah(item.harga * item.jumlah)}</span>
                         </li>
                     `).join('');
-                    
                     trxCard.innerHTML = `
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="text-lg font-semibold text-cyan-400">${trx.id}</h3>
-                            <span class="text-sm text-slate-400">${trx.tanggal.toLocaleString('id-ID')}</span>
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-lg font-semibold text-cyan-400">${trx.id}</h3>
+                                <p class="text-sm text-white font-medium">${trx.pelanggan}</p> 
+                            </div>
+                            <span class="text-sm text-slate-400 text-right flex-shrink-0 ml-2">${trx.tanggal.toLocaleString('id-ID')}</span>
                         </div>
                         <ul class="space-y-1 border-b border-slate-700 pb-2 mb-2">
                             ${itemsHtml}
@@ -764,21 +949,17 @@
             // === EVENT LISTENERS ===
 
             // Navigasi Halaman
+            // (Listener ini sudah otomatis mencakup tombol baru)
             navButtons.forEach(btn => {
                 btn.addEventListener('click', () => pindahHalaman(btn.dataset.page));
             });
 
             // Filter Kategori (Halaman Kasir)
             kategoriFilter.addEventListener('click', (e) => {
-                if (e.target.classList.contains('kategori-btn')) {
-                    document.querySelectorAll('.kategori-btn').forEach(btn => {
-                        btn.classList.remove('bg-cyan-600', 'text-white');
-                        btn.classList.add('bg-slate-700', 'text-slate-300');
-                    });
-                    e.target.classList.add('bg-cyan-600', 'text-white');
-                    e.target.classList.remove('bg-slate-700', 'text-slate-300');
-
-                    filterKategori = e.target.dataset.kategori;
+                const targetButton = e.target.closest('.kategori-btn');
+                if (targetButton) {
+                    filterKategori = targetButton.dataset.kategori;
+                    renderKategoriFilters();
                     renderProduk();
                 }
             });
@@ -798,6 +979,7 @@
             
             // Modal
             btnTutupModal.addEventListener('click', tutupModal);
+            btnCetakResi.addEventListener('click', handleCetakResi);
             successModal.addEventListener('click', (e) => {
                 if (e.target === successModal) {
                     tutupModal();
@@ -811,15 +993,117 @@
             daftarProdukAdminContainer.addEventListener('click', (e) => {
                 const target = e.target.closest('.btn-hapus-produk');
                 if (target) {
-                    // Dapatkan id dari data-id
                     const id = target.dataset.id;
                     hapusProduk(id);
                 }
             });
+            
+            // --- EVENT LISTENER (PENGATURAN) ---
+            // Listener ini akan berfungsi karena elemennya ada di 'halaman-pengaturan'
+            
+            // Simpan Nama Toko
+            formSettingNama.addEventListener('submit', (e) => {
+                e.preventDefault();
+                namaToko = settingNamaTokoInput.value.trim();
+                if (namaToko === "") {
+                    namaToko = "Toko Sejahtera"; 
+                }
+                renderNamaToko();
+                showNotifikasi("Nama toko berhasil diperbarui!", "sukses");
+            });
+
+            // Simpan Logo
+            formSettingLogo.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const file = settingLogoFileInput.files[0];
+                if (file) {
+                    if (logoUrl) {
+                        URL.revokeObjectURL(logoUrl);
+                    }
+                    logoUrl = URL.createObjectURL(file);
+                    renderLogo();
+                    showNotifikasi("Logo berhasil diperbarui!", "sukses");
+                    formSettingLogo.reset();
+                } else {
+                    showNotifikasi("Silakan pilih file gambar terlebih dahulu.", "error");
+                }
+            });
+
+            // Tambah Kategori
+            formTambahKategori.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const namaKat = kategoriBaruNamaInput.value.trim().toLowerCase();
+                if (namaKat === "" || namaKat === "semua") {
+                    showNotifikasi("Nama kategori tidak valid.", "error");
+                    return;
+                }
+                if (categories.includes(namaKat)) {
+                    showNotifikasi("Kategori tersebut sudah ada.", "error");
+                    return;
+                }
+                categories.push(namaKat);
+                // Perbarui daftar di halaman pengaturan SAJA
+                renderDaftarKategoriAdmin();
+                // (filter di kasir & opsi di produk akan auto-update saat halaman itu dikunjungi)
+                showNotifikasi(`Kategori '${namaKat}' berhasil ditambahkan!`, "sukses");
+                kategoriBaruNamaInput.value = '';
+            });
+
+            // Hapus Kategori (Event Delegation)
+            daftarKategoriAdmin.addEventListener('click', (e) => {
+                const target = e.target.closest('.btn-hapus-kategori');
+                if (target) {
+                    const kategoriNama = target.dataset.kategori;
+                    const produkTerkait = allProducts.some(p => p.kategori === kategoriNama);
+                    if (produkTerkait) {
+                        showNotifikasi("Tidak bisa menghapus: Kategori masih digunakan oleh produk.", "error");
+                        return;
+                    }
+                    categories = categories.filter(c => c !== kategoriNama);
+                    // Perbarui daftar di halaman pengaturan
+                    renderDaftarKategoriAdmin();
+                    showNotifikasi(`Kategori '${kategoriNama}' berhasil dihapus.`, "sukses");
+                }
+            });
+
+            // --- Event Listener Setup Modal ---
+            setupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // 1. Set Nama Toko
+                namaToko = setupNamaTokoInput.value.trim();
+                if (namaToko === "") {
+                    namaToko = "Toko Sejahtera";
+                }
+                renderNamaToko(); 
+                
+                // 2. Set Logo (jika ada)
+                const file = setupLogoFileInput.files[0];
+                if (file) {
+                    if (logoUrl) {
+                        URL.revokeObjectURL(logoUrl);
+                    }
+                    logoUrl = URL.createObjectURL(file);
+                    renderLogo();
+                }
+                
+                // 3. Sembunyikan Modal
+                setupModal.classList.add('hidden');
+                
+                // 4. Inisialisasi sisa aplikasi
+                // Panggil SEMUA fungsi render yang dibutuhkan
+                // untuk mengisi data di semua halaman (meskipun tersembunyi)
+                renderKategoriFilters();
+                renderKategoriOptions();
+                renderProduk();
+                renderDaftarProdukAdmin(); 
+                renderDaftarKategoriAdmin(); 
+            });
 
 
             // === INISIALISASI ===
-            renderProduk();
+            // Hanya panggil renderKeranjang() di awal.
+            // Sisanya dipanggil setelah setup modal ditutup.
             renderKeranjang();
         });
     </script>
