@@ -755,21 +755,55 @@
                 renderKeranjang();
             };
 
-            // Ubah Jumlah Item di Keranjang
+            // Ubah Jumlah Item di Keranjang (Tombol +/-)
             const ubahJumlahItem = (id, delta) => {
                 const itemDiKeranjang = keranjang.find(item => item.id === id);
                 if (!itemDiKeranjang) return;
+
                 const produk = allProducts.find(p => p.id === id);
                 const jumlahBaru = itemDiKeranjang.jumlah + delta;
+
+                // Cek stok saat menambah
                 if (delta > 0 && jumlahBaru > produk.stok) {
                     showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
+                    itemDiKeranjang.jumlah = produk.stok; // Set ke maks, jangan return
+                } else if (jumlahBaru <= 0) {
+                    // Hapus item jika kuantitas jadi 0 or kurang
+                    keranjang = keranjang.filter(item => item.id !== id);
+                } else {
+                    // Update jumlah
+                    itemDiKeranjang.jumlah = jumlahBaru;
+                }
+                
+                renderKeranjang();
+            };
+
+            // --- BARU: Fungsi untuk MENGATUR Jumlah Item via Input ---
+            const setJumlahItem = (id, newQty) => {
+                const itemDiKeranjang = keranjang.find(item => item.id === id);
+                if (!itemDiKeranjang) return;
+
+                const produk = allProducts.find(p => p.id === id);
+                
+                if (isNaN(newQty)) {
+                    // Jika input tidak valid (misal: "abc"), reset ke jumlah lama
+                    renderKeranjang();
                     return;
                 }
-                itemDiKeranjang.jumlah = jumlahBaru;
-                if (itemDiKeranjang.jumlah <= 0) {
+
+                // Cek stok
+                if (newQty > produk.stok) {
+                    showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
+                    itemDiKeranjang.jumlah = produk.stok; // Set ke stok maks
+                } else if (newQty < 1) {
+                    // Jika user mengetik 0 atau negatif, hapus item
                     keranjang = keranjang.filter(item => item.id !== id);
+                } else {
+                    // Set jumlah baru
+                    itemDiKeranjang.jumlah = newQty;
                 }
-                renderKeranjang();
+                
+                renderKeranjang(); // Render ulang untuk update total dan input value
             };
 
             // Render Ulang Tampilan Keranjang
@@ -792,13 +826,30 @@
                             </div>
                             <div class="flex items-center">
                                 <button class="btn-kurang w-7 h-7 bg-slate-700 rounded-full font-bold text-lg text-cyan-400 hover:bg-slate-600">-</button>
-                                <span class="mx-2 text-sm font-medium w-6 text-center">${item.jumlah}</span>
+                                <!-- === MODIFIKASI: Ubah span menjadi input === -->
+                                <input 
+                                    type="number" 
+                                    class="cart-item-qty-input mx-1 w-12 text-center bg-slate-700 border border-slate-600 text-white rounded-md p-1" 
+                                    value="${item.jumlah}" 
+                                    data-id="${item.id}"
+                                    min="1"
+                                >
                                 <button class="btn-tambah w-7 h-7 bg-slate-700 rounded-full font-bold text-lg text-cyan-400 hover:bg-slate-600">+</button>
                             </div>
                             <p class="text-sm font-semibold text-white w-1/4 text-right">${formatRupiah(item.harga * item.jumlah)}</p>
                         `;
+
                         cartItem.querySelector('.btn-kurang').addEventListener('click', () => ubahJumlahItem(item.id, -1));
                         cartItem.querySelector('.btn-tambah').addEventListener('click', () => ubahJumlahItem(item.id, 1));
+
+                        // --- BARU: Listener untuk input kuantitas ---
+                        cartItem.querySelector('.cart-item-qty-input').addEventListener('change', (e) => {
+                            const id = parseInt(e.target.dataset.id);
+                            const newQty = parseInt(e.target.value);
+                            setJumlahItem(id, newQty);
+                        });
+                        // --- AKHIR BARU ---
+
                         cartItemsContainer.appendChild(cartItem);
                     });
                 }
