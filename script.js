@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === ELEMEN DOM (HALAMAN RIWAYAT) ===
     const riwayatContainer = document.getElementById('riwayat-container');
     const riwayatEmptyMessage = document.getElementById('riwayat-empty-message');
+    const btnResetRiwayat = document.getElementById('btn-reset-riwayat'); // === BARU ===
 
     // === ELEMEN DOM (HALAMAN PEMBUKUAN) ===
     const totalPenjualanDisplay = document.getElementById('total-penjualan-display');
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnHitungLabaBersih = document.getElementById('btn-hitung-laba-bersih');
     const labaBersihDisplay = document.getElementById('laba-bersih-display');
     const dailyReportBody = document.getElementById('daily-report-body');
+    const btnResetPembukuan = document.getElementById('btn-reset-pembukuan'); // === BARU ===
 
     // === ELEMEN DOM (SETUP MODAL) ===
     const setupModal = document.getElementById('setup-modal');
@@ -346,12 +348,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const produk = allProducts.find(p => p.id === id);
         const jumlahBaru = itemDiKeranjang.jumlah + delta;
 
+        // Cek stok saat menambah
         if (delta > 0 && jumlahBaru > produk.stok) {
             showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
-            itemDiKeranjang.jumlah = produk.stok; 
+            itemDiKeranjang.jumlah = produk.stok; // Set ke maks, jangan return
         } else if (jumlahBaru <= 0) {
+            // Hapus item jika kuantitas jadi 0 or kurang
             keranjang = keranjang.filter(item => item.id !== id);
         } else {
+            // Update jumlah
             itemDiKeranjang.jumlah = jumlahBaru;
         }
         
@@ -365,20 +370,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const produk = allProducts.find(p => p.id === id);
         
         if (isNaN(newQty)) {
+            // Jika input tidak valid (misal: "abc"), reset ke jumlah lama
             renderKeranjang();
             return;
         }
 
+        // Cek stok
         if (newQty > produk.stok) {
             showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
-            itemDiKeranjang.jumlah = produk.stok; 
+            itemDiKeranjang.jumlah = produk.stok; // Set ke stok maks
         } else if (newQty < 1) {
+            // Jika user mengetik 0 atau negatif, hapus item
             keranjang = keranjang.filter(item => item.id !== id);
         } else {
+            // Set jumlah baru
             itemDiKeranjang.jumlah = newQty;
         }
         
-        renderKeranjang(); 
+        renderKeranjang(); // Render ulang untuk update total dan input value
     };
 
     const renderKeranjang = () => {
@@ -814,11 +823,9 @@ document.addEventListener('DOMContentLoaded', () => {
             riwayatContainer.appendChild(trxCard);
         });
 
-        // Event Delegation untuk tombol cetak di riwayat
         const printButtons = document.querySelectorAll('.btn-print-history');
         printButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                // Mencegah event bubbling yang tidak diinginkan
                 e.stopPropagation();
                 const id = e.currentTarget.dataset.id;
                 const trx = riwayatPenjualan.find(t => t.id === id);
@@ -829,23 +836,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // === BARU: Fungsi Reset Riwayat & Pembukuan (Menghapus Data Transaksi) ===
+    const hapusSemuaRiwayat = () => {
+        const konfirmasi = confirm("Apakah Anda yakin ingin menghapus SEMUA data riwayat transaksi? Tindakan ini tidak dapat dibatalkan dan akan mereset laporan pembukuan.");
+        
+        if (konfirmasi) {
+            // Kosongkan array riwayat
+            riwayatPenjualan = [];
+            
+            // Simpan perubahan ke localStorage
+            simpanRiwayat();
+            
+            // Render ulang tampilan
+            renderRiwayat();
+            renderPembukuan();
+            
+            showNotifikasi("Data riwayat transaksi dan pembukuan berhasil dihapus.", "sukses");
+        }
+    };
+
     const renderPembukuan = () => {
         let totalPenjualan = 0;
         let totalModal = 0;
         const dailyStats = {};
 
         riwayatPenjualan.forEach(trx => {
-            // Agregat Global
-            totalPenjualan += trx.subtotal; // Asumsi omzet = subtotal (sebelum pajak)
+            totalPenjualan += trx.subtotal; 
             
-            // Hitung modal per transaksi
             let trxModal = 0;
             trx.items.forEach(item => {
                 trxModal += (item.modal || 0) * item.jumlah;
             });
             totalModal += trxModal;
 
-            // Agregat Harian
             const dateKey = new Date(trx.tanggal).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
             
             if (!dailyStats[dateKey]) {
@@ -863,7 +886,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         labaKotorGlobal = totalPenjualan - totalModal;
 
-        // Update UI Ringkasan Global
         totalPenjualanDisplay.textContent = formatRupiah(totalPenjualan);
         totalModalDisplay.textContent = formatRupiah(totalModal);
         labaKotorDisplay.textContent = formatRupiah(labaKotorGlobal);
@@ -871,20 +893,12 @@ document.addEventListener('DOMContentLoaded', () => {
         biayaOperasionalInput.value = '';
         labaBersihDisplay.textContent = 'Rp 0';
 
-        // Update UI Tabel Harian
         dailyReportBody.innerHTML = '';
-        // Urutkan tanggal dari yang terbaru
-        const sortedDates = Object.keys(dailyStats).sort((a, b) => new Date(b) - new Date(a)); // Note: sorting localized strings might be tricky, simple sort usually works for ISO, but for LocaleString it depends. For simplicity here we iterate. Ideally use ISO keys for sorting then format.
+        const sortedDates = Object.keys(dailyStats).sort((a, b) => new Date(b) - new Date(a)); 
         
-        // Better sorting approach:
-        // Re-map to array of objects, sort by date object, then render
         const reportArray = Object.keys(dailyStats).map(key => {
              return { date: key, ...dailyStats[key] };
         });
-        // Sort logic needed if strict chronological order is required, 
-        // but standard Object.keys iteration order is usually insertion order for non-integer keys in modern JS engines.
-        // Since we populate from riwayatPenjualan which is chronological, reportArray should be chronological.
-        // Let's reverse to show newest first
         reportArray.reverse().forEach(stat => {
             const row = document.createElement('tr');
             row.className = 'border-b border-slate-700 hover:bg-slate-700/50 transition-colors';
@@ -940,7 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Modal
     btnTutupModal.addEventListener('click', tutupModal);
-    btnCetakResi.addEventListener('click', () => handleCetakResi(null)); // Call without args for last transaction
+    btnCetakResi.addEventListener('click', () => handleCetakResi(null)); 
     successModal.addEventListener('click', (e) => {
         if (e.target === successModal) {
             tutupModal();
@@ -975,7 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotifikasi("Nama toko berhasil diperbarui!", "sukses");
     });
 
-    // --- BARU: Event Listener Tombol Reset ---
+    // --- BARU: Event Listener Tombol Reset Data Utama (Zona Bahaya) ---
     btnResetData.addEventListener('click', () => {
         const konfirmasi = confirm("PERINGATAN: Apakah Anda yakin ingin menghapus data? Data produk dan transaksi akan hilang. Profil toko (nama dan logo) akan TETAP ADA.");
         
@@ -983,12 +997,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const konfirmasiKedua = confirm("Lanjutkan reset data transaksi?");
             
             if (konfirmasiKedua) {
-                // Hapus hanya data spesifik
                 localStorage.removeItem('kasir_products');
                 localStorage.removeItem('kasir_categories');
                 localStorage.removeItem('kasir_history');
-                
-                // Jangan hapus 'kasir_storeName', 'kasir_logo', 'kasir_taxPercent', 'kasir_setupComplete'
+                // Jangan hapus kasir_storeName, kasir_logo, kasir_setupComplete
                 
                 location.reload();
             }
@@ -1018,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        if (file.size > 5 * 1024 * 1024) { // Batas 5MB
+        if (file.size > 5 * 1024 * 1024) { 
             showNotifikasi("Ukuran file terlalu besar. Maksimal 5MB.", "error");
             return;
         }
@@ -1102,6 +1114,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const labaBersih = labaKotorGlobal - biayaOperasional;
         labaBersihDisplay.textContent = formatRupiah(labaBersih);
     });
+
+    // --- BARU: Event Listener Reset Riwayat & Pembukuan ---
+    // Kita gunakan satu handler untuk kedua tombol karena fungsinya sama (menghapus riwayat transaksi)
+    btnResetRiwayat.addEventListener('click', hapusSemuaRiwayat);
+    btnResetPembukuan.addEventListener('click', hapusSemuaRiwayat);
 
     // --- Event Listener Setup Modal ---
     setupForm.addEventListener('submit', (e) => {
