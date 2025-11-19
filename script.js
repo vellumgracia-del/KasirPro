@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const biayaOperasionalInput = document.getElementById('biaya-operasional-input');
     const btnHitungLabaBersih = document.getElementById('btn-hitung-laba-bersih');
     const labaBersihDisplay = document.getElementById('laba-bersih-display');
+    const dailyReportBody = document.getElementById('daily-report-body');
 
     // === ELEMEN DOM (SETUP MODAL) ===
     const setupModal = document.getElementById('setup-modal');
@@ -147,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderDaftarKategoriAdmin();
     };
     
-    // Tampilkan Notifikasi Kustom
     let notifikasiTimeout;
     const showNotifikasi = (pesan, tipe = 'error') => {
         clearTimeout(notifikasiTimeout); 
@@ -163,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     };
 
-    // Format Angka ke Rupiah
     const formatRupiah = (angka) => {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -172,20 +171,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }).format(angka);
     };
     
-    // Render Nama Toko
     const renderNamaToko = () => {
         namaTokoDisplay.textContent = namaToko;
         settingNamaTokoInput.value = namaToko; 
     };
 
-    // --- Render Pajak ---
     const renderPajak = () => {
         pajakLabel.textContent = `Pajak (${pajakPersen}%)`;
         settingPajakInput.value = pajakPersen;
         updateTotal();
     };
 
-    // Render Logo 
     const renderLogo = () => {
         if (logoDataUrl) {
             logoContainer.innerHTML = `<img src="${logoDataUrl}" alt="Logo Toko" class="w-full h-full rounded-lg object-cover">`;
@@ -195,15 +191,13 @@ document.addEventListener('DOMContentLoaded', () => {
             logoPlaceholderIcon.classList.add('hidden');
         } else {
             logoContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7V2h5l2 5-2 5-5-5Z"/><path d="m14 7 5 5-5 5V7Z"/><path d="M9 12 7 7l5 5-5 5Z"/><path d="m16 12 5 5-5-5-5 5Z"/></svg>`;
-            logoContainer.className = 'w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center';
+            logoContainer.className = 'w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center'; // Pakai hardcode
             logoPreview.src = '';
             logoPreview.classList.add('hidden');
             logoPlaceholderIcon.classList.remove('hidden');
         }
     };
 
-
-    // Render Filter Kategori
     const renderKategoriFilters = () => {
         kategoriFilter.innerHTML = ''; 
         categories.forEach(kategori => {
@@ -222,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
-    // Render Opsi Kategori
     const renderKategoriOptions = () => {
         prodKategoriSelect.innerHTML = ''; 
         categories.forEach(kategori => {
@@ -234,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
-    // Render Daftar Kategori (Admin)
     const renderDaftarKategoriAdmin = () => {
         daftarKategoriAdmin.innerHTML = ''; 
         const adminCategories = categories.filter(k => k !== 'semua');
@@ -255,7 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Pindah Halaman
     const pindahHalaman = (targetPageId) => {
         pages.forEach(page => page.classList.add('hidden'));
         const targetPage = document.getElementById(targetPageId);
@@ -290,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Render Produk di Grid
     const renderProduk = () => {
         productGrid.innerHTML = ''; 
         const filteredProducts = allProducts.filter(produk => {
@@ -327,7 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Tambah Produk ke Keranjang
     const tambahKeKeranjang = (id) => {
         const produk = allProducts.find(p => p.id === id);
         if (produk.stok <= 0) {
@@ -348,7 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderKeranjang();
     };
 
-    // Ubah Jumlah Item di Keranjang (Tombol +/-)
     const ubahJumlahItem = (id, delta) => {
         const itemDiKeranjang = keranjang.find(item => item.id === id);
         if (!itemDiKeranjang) return;
@@ -356,22 +344,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const produk = allProducts.find(p => p.id === id);
         const jumlahBaru = itemDiKeranjang.jumlah + delta;
 
-        // Cek stok saat menambah
         if (delta > 0 && jumlahBaru > produk.stok) {
             showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
-            itemDiKeranjang.jumlah = produk.stok; // Set ke maks, jangan return
+            itemDiKeranjang.jumlah = produk.stok; 
         } else if (jumlahBaru <= 0) {
-            // Hapus item jika kuantitas jadi 0 or kurang
             keranjang = keranjang.filter(item => item.id !== id);
         } else {
-            // Update jumlah
             itemDiKeranjang.jumlah = jumlahBaru;
         }
         
         renderKeranjang();
     };
 
-    // --- BARU: Fungsi untuk MENGATUR Jumlah Item via Input ---
     const setJumlahItem = (id, newQty) => {
         const itemDiKeranjang = keranjang.find(item => item.id === id);
         if (!itemDiKeranjang) return;
@@ -379,27 +363,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const produk = allProducts.find(p => p.id === id);
         
         if (isNaN(newQty)) {
-            // Jika input tidak valid (misal: "abc"), reset ke jumlah lama
             renderKeranjang();
             return;
         }
 
-        // Cek stok
         if (newQty > produk.stok) {
             showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
-            itemDiKeranjang.jumlah = produk.stok; // Set ke stok maks
+            itemDiKeranjang.jumlah = produk.stok; 
         } else if (newQty < 1) {
-            // Jika user mengetik 0 atau negatif, hapus item
             keranjang = keranjang.filter(item => item.id !== id);
         } else {
-            // Set jumlah baru
             itemDiKeranjang.jumlah = newQty;
         }
         
-        renderKeranjang(); // Render ulang untuk update total dan input value
+        renderKeranjang(); 
     };
 
-    // Render Ulang Tampilan Keranjang
     const renderKeranjang = () => {
         cartItemsContainer.innerHTML = '';
         if (keranjang.length === 0) {
@@ -419,7 +398,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="flex items-center">
                         <button class="btn-kurang w-7 h-7 bg-slate-700 rounded-full font-bold text-lg text-cyan-400 hover:bg-slate-600">-</button>
-                        <!-- === MODIFIKASI: Ubah span menjadi input === -->
                         <input 
                             type="number" 
                             class="cart-item-qty-input mx-1 w-12 text-center bg-slate-700 border border-slate-600 text-white rounded-md p-1" 
@@ -435,13 +413,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartItem.querySelector('.btn-kurang').addEventListener('click', () => ubahJumlahItem(item.id, -1));
                 cartItem.querySelector('.btn-tambah').addEventListener('click', () => ubahJumlahItem(item.id, 1));
 
-                // --- BARU: Listener untuk input kuantitas ---
                 cartItem.querySelector('.cart-item-qty-input').addEventListener('change', (e) => {
                     const id = parseInt(e.target.dataset.id);
                     const newQty = parseInt(e.target.value);
                     setJumlahItem(id, newQty);
                 });
-                // --- AKHIR BARU ---
 
                 cartItemsContainer.appendChild(cartItem);
             });
@@ -449,7 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTotal();
     };
 
-    // Update Total
     const updateTotal = () => {
         const subtotal = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0);
         const pajak = subtotal * (pajakPersen / 100); 
@@ -461,14 +436,12 @@ document.addEventListener('DOMContentLoaded', () => {
         hitungKembalian();
     };
 
-    // Format Input 'Jumlah Bayar'
     const formatInputBayar = (e) => {
         let value = e.target.value.replace(/[^0-9]/g, '');
         e.target.value = value;
         hitungKembalian();
     };
     
-    // Hitung Kembalian 
     const hitungKembalian = () => {
         const subtotal = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0);
         const pajak = subtotal * (pajakPersen / 100); 
@@ -492,7 +465,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // Proses Pembayaran 
     const prosesBayar = () => {
         const subtotal = keranjang.reduce((acc, item) => acc + (item.harga * item.jumlah), 0);
         const pajak = subtotal * (pajakPersen / 100);
@@ -532,7 +504,6 @@ document.addEventListener('DOMContentLoaded', () => {
         successModal.querySelector('div').classList.add('scale-100');
     };
     
-    // Transaksi Baru
     const mulaiBaru = () => {
         keranjang = [];
         jumlahBayarInput.value = '';
@@ -544,7 +515,6 @@ document.addEventListener('DOMContentLoaded', () => {
         lastTransaction = null;
     };
     
-    // Tutup Modal
     const tutupModal = () => {
         successModal.classList.add('hidden');
         successModal.querySelector('div').classList.remove('scale-100');
@@ -552,13 +522,21 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProduk(); 
     };
     
-    // Cetak Resi 
-    const handleCetakResi = () => {
-        if (!lastTransaction) {
+    const handleCetakResi = (transaksiSpesifik = null) => {
+        // Jika argumen adalah event (karena di-click), abaikan dan pakai lastTransaction
+        // atau jika transaksiSpesifik adalah objek transaksi valid, gunakan itu.
+        let trx;
+        if (transaksiSpesifik && transaksiSpesifik.id) {
+            trx = transaksiSpesifik;
+        } else {
+            trx = lastTransaction;
+        }
+
+        if (!trx) {
             showNotifikasi("Data transaksi tidak ditemukan.");
             return;
         }
-        const trx = lastTransaction;
+        
         let itemsHtml = trx.items.map(item => `
             <tr>
                 <td style="padding: 2px 0;">${item.nama}</td>
@@ -619,7 +597,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 250); 
     };
 
-    // Render Daftar Produk (Admin)
     const renderDaftarProdukAdmin = () => {
         daftarProdukAdminContainer.innerHTML = '';
         if (allProducts.length === 0) {
@@ -651,7 +628,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
-    // --- Reset Form Produk ---
     const resetFormProduk = () => {
         formProdukTitle.textContent = "Tambah Produk Baru";
         btnSubmitProduk.textContent = "Tambahkan Produk";
@@ -664,21 +640,18 @@ document.addEventListener('DOMContentLoaded', () => {
         currentlyEditingProductId = null;
     };
 
-    // --- Isi Form untuk Edit ---
     const handleEditProduk = (id) => {
         const produk = allProducts.find(p => p.id === id);
         if (!produk) return;
 
         currentlyEditingProductId = id;
 
-        // Isi form
         document.getElementById('prod-nama').value = produk.nama;
         document.getElementById('prod-kategori').value = produk.kategori;
         document.getElementById('prod-modal').value = produk.modal || 0;
         document.getElementById('prod-harga').value = produk.harga;
         document.getElementById('prod-stok').value = produk.stok;
         
-        //UI
         formProdukTitle.textContent = `Edit Produk: ${produk.nama}`;
         btnSubmitProduk.textContent = "Simpan Perubahan";
         btnSubmitProduk.classList.remove('bg-cyan-600', 'hover:bg-cyan-500');
@@ -688,7 +661,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formProdukTitle.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     
-    // --- Handle Submit Form (Create & Update) ---
     const handleSubmitProduk = (e) => {
         e.preventDefault();
         
@@ -723,7 +695,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const processSubmit = (gambarDataUrl) => {
             if (currentlyEditingProductId) {
-                // --- LOGIKA UPDATE ---
                 const produk = allProducts.find(p => p.id === currentlyEditingProductId);
                 if (!produk) return;
 
@@ -743,7 +714,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 resetFormProduk(); 
 
             } else {
-                // --- LOGIKA CREATE (Tambah Baru) ---
                 const maxId = allProducts.reduce((max, p) => p.id > max ? p.id : max, 0);
                 const newId = maxId + 1;
                 
@@ -771,7 +741,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // Handle Hapus Produk
     const hapusProduk = (id) => {
         const idToRemove = parseInt(id);
         allProducts = allProducts.filter(p => p.id !== idToRemove);
@@ -795,7 +764,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotifikasi("Produk berhasil dihapus.", "sukses");
     };
     
-    // Render Riwayat Penjualan
     const renderRiwayat = () => {
         riwayatContainer.innerHTML = ''; 
         if (riwayatPenjualan.length === 0) {
@@ -822,7 +790,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="text-lg font-semibold text-cyan-400">${trx.id}</h3>
                         <p class="text-sm text-white font-medium">${trx.pelanggan}</p> 
                     </div>
-                    <span class="text-sm text-slate-400 text-right flex-shrink-0 ml-2">${trx.tanggal.toLocaleString('id-ID')}</span>
+                    <div class="flex flex-col items-end">
+                        <span class="text-sm text-slate-400 mb-1">${new Date(trx.tanggal).toLocaleString('id-ID')}</span>
+                        <button class="btn-print-history text-xs bg-slate-700 hover:bg-slate-600 text-cyan-400 px-2 py-1 rounded flex items-center gap-1 transition-colors" data-id="${trx.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            Cetak
+                        </button>
+                    </div>
                 </div>
                 <ul class="space-y-1 border-b border-slate-700 pb-2 mb-2">
                     ${itemsHtml}
@@ -837,28 +811,98 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             riwayatContainer.appendChild(trxCard);
         });
+
+        // Event Delegation untuk tombol cetak di riwayat
+        const printButtons = document.querySelectorAll('.btn-print-history');
+        printButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Mencegah event bubbling yang tidak diinginkan
+                e.stopPropagation();
+                const id = e.currentTarget.dataset.id;
+                const trx = riwayatPenjualan.find(t => t.id === id);
+                if (trx) {
+                    handleCetakResi(trx);
+                }
+            });
+        });
     };
 
-    // --- Render Halaman Pembukuan ---
     const renderPembukuan = () => {
         let totalPenjualan = 0;
         let totalModal = 0;
+        const dailyStats = {};
 
         riwayatPenjualan.forEach(trx => {
-            totalPenjualan += trx.subtotal;
+            // Agregat Global
+            totalPenjualan += trx.subtotal; // Asumsi omzet = subtotal (sebelum pajak)
+            
+            // Hitung modal per transaksi
+            let trxModal = 0;
             trx.items.forEach(item => {
-                totalModal += (item.modal || 0) * item.jumlah;
+                trxModal += (item.modal || 0) * item.jumlah;
             });
+            totalModal += trxModal;
+
+            // Agregat Harian
+            const dateKey = new Date(trx.tanggal).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            if (!dailyStats[dateKey]) {
+                dailyStats[dateKey] = {
+                    count: 0,
+                    omzet: 0,
+                    modal: 0
+                };
+            }
+            
+            dailyStats[dateKey].count += 1;
+            dailyStats[dateKey].omzet += trx.subtotal;
+            dailyStats[dateKey].modal += trxModal;
         });
 
         labaKotorGlobal = totalPenjualan - totalModal;
 
+        // Update UI Ringkasan Global
         totalPenjualanDisplay.textContent = formatRupiah(totalPenjualan);
         totalModalDisplay.textContent = formatRupiah(totalModal);
         labaKotorDisplay.textContent = formatRupiah(labaKotorGlobal);
         
         biayaOperasionalInput.value = '';
         labaBersihDisplay.textContent = 'Rp 0';
+
+        // Update UI Tabel Harian
+        dailyReportBody.innerHTML = '';
+        // Urutkan tanggal dari yang terbaru
+        const sortedDates = Object.keys(dailyStats).sort((a, b) => new Date(b) - new Date(a)); // Note: sorting localized strings might be tricky, simple sort usually works for ISO, but for LocaleString it depends. For simplicity here we iterate. Ideally use ISO keys for sorting then format.
+        
+        // Better sorting approach:
+        // Re-map to array of objects, sort by date object, then render
+        const reportArray = Object.keys(dailyStats).map(key => {
+             return { date: key, ...dailyStats[key] };
+        });
+        // Sort logic needed if strict chronological order is required, 
+        // but standard Object.keys iteration order is usually insertion order for non-integer keys in modern JS engines.
+        // Since we populate from riwayatPenjualan which is chronological, reportArray should be chronological.
+        // Let's reverse to show newest first
+        reportArray.reverse().forEach(stat => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-slate-700 hover:bg-slate-700/50 transition-colors';
+            
+            const labaKotorHarian = stat.omzet - stat.modal;
+            const profitClass = labaKotorHarian >= 0 ? 'text-green-400' : 'text-red-400';
+
+            row.innerHTML = `
+                <td class="p-3 text-slate-300">${stat.date}</td>
+                <td class="p-3 text-slate-300">${stat.count}</td>
+                <td class="p-3 text-slate-300">${formatRupiah(stat.omzet)}</td>
+                <td class="p-3 text-slate-300">${formatRupiah(stat.modal)}</td>
+                <td class="p-3 font-medium text-right ${profitClass}">${formatRupiah(labaKotorHarian)}</td>
+            `;
+            dailyReportBody.appendChild(row);
+        });
+
+        if (reportArray.length === 0) {
+             dailyReportBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">Belum ada data transaksi.</td></tr>`;
+        }
     };
 
 
@@ -894,7 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Modal
     btnTutupModal.addEventListener('click', tutupModal);
-    btnCetakResi.addEventListener('click', handleCetakResi);
+    btnCetakResi.addEventListener('click', () => handleCetakResi(null)); // Call without args for last transaction
     successModal.addEventListener('click', (e) => {
         if (e.target === successModal) {
             tutupModal();
@@ -948,11 +992,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            showNotifikasi("File tidak valid. Harap unggah file gambar.", "error");
+            showNotifikasi("File tidak cocok. Harap unggah file gambar.", "error");
             return;
         }
         
-        if (file.size > 5 * 1024 * 1024) { // Batas 5MB
+        if (file.size > 5 * 1024 * 1024) { 
             showNotifikasi("Ukuran file terlalu besar. Maksimal 5MB.", "error");
             return;
         }
