@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formTambahKategori = document.getElementById('form-tambah-kategori');
     const kategoriBaruNamaInput = document.getElementById('kategori-baru-nama');
     const daftarKategoriAdmin = document.getElementById('daftar-kategori-admin');
-    const btnResetData = document.getElementById('btn-reset-data'); // === BARU: Elemen tombol reset ===
+    const btnResetData = document.getElementById('btn-reset-data'); 
 
     // === ELEMEN DOM (HALAMAN RIWAYAT) ===
     const riwayatContainer = document.getElementById('riwayat-container');
@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             logoPlaceholderIcon.classList.remove('hidden');
         }
     };
+
 
     const renderKategoriFilters = () => {
         kategoriFilter.innerHTML = ''; 
@@ -976,16 +977,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- BARU: Event Listener Tombol Reset ---
     btnResetData.addEventListener('click', () => {
-        // Konfirmasi ganda untuk keamanan
-        const konfirmasi = confirm("PERINGATAN: Apakah Anda yakin ingin menghapus SEMUA data? Tindakan ini tidak bisa dibatalkan.");
+        const konfirmasi = confirm("PERINGATAN: Apakah Anda yakin ingin menghapus data? Data produk dan transaksi akan hilang. Profil toko (nama dan logo) akan TETAP ADA.");
         
         if (konfirmasi) {
-            const konfirmasiKedua = confirm("Data produk, riwayat penjualan, dan pengaturan akan hilang permanen. Lanjutkan?");
+            const konfirmasiKedua = confirm("Lanjutkan reset data transaksi?");
             
             if (konfirmasiKedua) {
-                // Hapus semua data di localStorage
-                localStorage.clear();
-                // Refresh halaman untuk memuat ulang aplikasi dari awal
+                // Hapus hanya data spesifik
+                localStorage.removeItem('kasir_products');
+                localStorage.removeItem('kasir_categories');
+                localStorage.removeItem('kasir_history');
+                
+                // Jangan hapus 'kasir_storeName', 'kasir_logo', 'kasir_taxPercent', 'kasir_setupComplete'
+                
                 location.reload();
             }
         }
