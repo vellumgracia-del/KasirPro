@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formTambahKategori = document.getElementById('form-tambah-kategori');
     const kategoriBaruNamaInput = document.getElementById('kategori-baru-nama');
     const daftarKategoriAdmin = document.getElementById('daftar-kategori-admin');
+    const btnResetData = document.getElementById('btn-reset-data'); // === BARU: Elemen tombol reset ===
 
     // === ELEMEN DOM (HALAMAN RIWAYAT) ===
     const riwayatContainer = document.getElementById('riwayat-container');
@@ -973,6 +974,23 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotifikasi("Nama toko berhasil diperbarui!", "sukses");
     });
 
+    // --- BARU: Event Listener Tombol Reset ---
+    btnResetData.addEventListener('click', () => {
+        // Konfirmasi ganda untuk keamanan
+        const konfirmasi = confirm("PERINGATAN: Apakah Anda yakin ingin menghapus SEMUA data? Tindakan ini tidak bisa dibatalkan.");
+        
+        if (konfirmasi) {
+            const konfirmasiKedua = confirm("Data produk, riwayat penjualan, dan pengaturan akan hilang permanen. Lanjutkan?");
+            
+            if (konfirmasiKedua) {
+                // Hapus semua data di localStorage
+                localStorage.clear();
+                // Refresh halaman untuk memuat ulang aplikasi dari awal
+                location.reload();
+            }
+        }
+    });
+
     // --- Event Listener Form Pajak ---
     formSettingPajak.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -992,11 +1010,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            showNotifikasi("File tidak cocok. Harap unggah file gambar.", "error");
+            showNotifikasi("File tidak valid. Harap unggah file gambar.", "error");
             return;
         }
         
-        if (file.size > 5 * 1024 * 1024) { 
+        if (file.size > 5 * 1024 * 1024) { // Batas 5MB
             showNotifikasi("Ukuran file terlalu besar. Maksimal 5MB.", "error");
             return;
         }
