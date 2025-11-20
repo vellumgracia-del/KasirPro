@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === ELEMEN DOM (HALAMAN RIWAYAT) ===
     const riwayatContainer = document.getElementById('riwayat-container');
     const riwayatEmptyMessage = document.getElementById('riwayat-empty-message');
-    const btnResetRiwayat = document.getElementById('btn-reset-riwayat'); // === BARU ===
+    const btnResetRiwayat = document.getElementById('btn-reset-riwayat'); 
 
     // === ELEMEN DOM (HALAMAN PEMBUKUAN) ===
     const totalPenjualanDisplay = document.getElementById('total-penjualan-display');
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnHitungLabaBersih = document.getElementById('btn-hitung-laba-bersih');
     const labaBersihDisplay = document.getElementById('laba-bersih-display');
     const dailyReportBody = document.getElementById('daily-report-body');
-    const btnResetPembukuan = document.getElementById('btn-reset-pembukuan'); // === BARU ===
+    const btnResetPembukuan = document.getElementById('btn-reset-pembukuan'); 
 
     // === ELEMEN DOM (SETUP MODAL) ===
     const setupModal = document.getElementById('setup-modal');
@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cek stok
         if (newQty > produk.stok) {
             showNotifikasi("Stok tidak mencukupi (total stok: " + produk.stok + ").");
-            itemDiKeranjang.jumlah = produk.stok; // Set ke stok maks
+            itemDiKeranjang.jumlah = produk.stok; 
         } else if (newQty < 1) {
             // Jika user mengetik 0 atau negatif, hapus item
             keranjang = keranjang.filter(item => item.id !== id);
@@ -534,8 +534,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const handleCetakResi = (transaksiSpesifik = null) => {
-        // Jika argumen adalah event (karena di-click), abaikan dan pakai lastTransaction
-        // atau jika transaksiSpesifik adalah objek transaksi valid, gunakan itu.
         let trx;
         if (transaksiSpesifik && transaksiSpesifik.id) {
             trx = transaksiSpesifik;
@@ -1000,7 +998,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.removeItem('kasir_products');
                 localStorage.removeItem('kasir_categories');
                 localStorage.removeItem('kasir_history');
-                // Jangan hapus kasir_storeName, kasir_logo, kasir_setupComplete
                 
                 location.reload();
             }
@@ -1115,8 +1112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         labaBersihDisplay.textContent = formatRupiah(labaBersih);
     });
 
-    // --- BARU: Event Listener Reset Riwayat & Pembukuan ---
-    // Kita gunakan satu handler untuk kedua tombol karena fungsinya sama (menghapus riwayat transaksi)
+    
+  
     btnResetRiwayat.addEventListener('click', hapusSemuaRiwayat);
     btnResetPembukuan.addEventListener('click', hapusSemuaRiwayat);
 
